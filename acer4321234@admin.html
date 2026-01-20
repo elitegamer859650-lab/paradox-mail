@@ -19,6 +19,9 @@
         
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+
+        input, textarea { background: rgba(0, 0, 0, 0.4) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; color: white !important; }
+        input:focus, textarea:focus { border-color: #3b82f6 !important; outline: none; }
     </style>
 </head>
 <body class="p-6 md:p-10">
@@ -28,12 +31,12 @@
             <img src="icon.png" class="w-14 h-14 rounded-2xl shadow-xl">
             <div>
                 <h1 class="text-2xl font-black italic uppercase">Master <span class="text-blue-500">Admin</span></h1>
-                <p class="text-[10px] mono text-gray-500 uppercase tracking-widest">Local Access: Authorized</p>
+                <p class="text-[10px] mono text-gray-500 uppercase tracking-widest">Paradox Studio HQ</p>
             </div>
         </div>
         <div class="text-right">
             <p id="timer" class="text-xl font-bold mono text-blue-500">00:00:00</p>
-            <p class="text-[9px] text-gray-600 uppercase">Real-time Database: Active</p>
+            <p class="text-[9px] text-gray-600 uppercase font-bold">Cloud Connection: Stable</p>
         </div>
     </header>
 
@@ -42,15 +45,15 @@
         <div class="lg:col-span-2 space-y-8">
             
             <div class="glass p-8 card-vip">
-                <h3 class="text-xl font-black uppercase italic mb-6 text-yellow-500"><i class="fas fa-money-bill-wave mr-2"></i> Pending VIP Requests</h3>
+                <h3 class="text-xl font-black uppercase italic mb-6 text-yellow-500"><i class="fas fa-money-bill-wave mr-2"></i> VIP Payment Requests</h3>
                 <div class="overflow-x-auto min-h-[200px]">
                     <table class="w-full text-left text-sm">
-                        <thead class="text-[10px] text-gray-500 uppercase border-b border-white/5">
+                        <thead class="text-[10px] text-gray-500 uppercase border-b border-white/5 font-bold">
                             <tr>
-                                <th class="pb-4">User ID</th>
-                                <th class="pb-4">Gmail Address</th>
-                                <th class="pb-4">TRX ID</th>
-                                <th class="pb-4 text-right">Action</th>
+                                <th class="pb-4">Username</th>
+                                <th class="pb-4">Gmail</th>
+                                <th class="pb-4">Transaction ID</th>
+                                <th class="pb-4 text-right">Approval</th>
                             </tr>
                         </thead>
                         <tbody id="vipRequestList">
@@ -60,15 +63,15 @@
             </div>
 
             <div class="glass p-8 card-system">
-                <h3 class="text-xl font-black uppercase italic mb-6 text-blue-500"><i class="fas fa-users mr-2"></i> User Directory</h3>
+                <h3 class="text-xl font-black uppercase italic mb-6 text-blue-500"><i class="fas fa-users mr-2"></i> User Database</h3>
                 <div class="overflow-x-auto min-h-[300px]">
                     <table class="w-full text-left text-sm">
-                        <thead class="text-[10px] text-gray-500 uppercase border-b border-white/5">
+                        <thead class="text-[10px] text-gray-500 uppercase border-b border-white/5 font-bold">
                             <tr>
                                 <th class="pb-4">Username</th>
                                 <th class="pb-4">Full Name</th>
-                                <th class="pb-4">Rank</th>
-                                <th class="pb-4 text-right">Ops</th>
+                                <th class="pb-4">Current Rank</th>
+                                <th class="pb-4 text-right">Delete</th>
                             </tr>
                         </thead>
                         <tbody id="userListBody">
@@ -79,19 +82,19 @@
         </div>
 
         <div class="space-y-8">
-            <div class="glass p-8">
-                <h3 class="text-lg font-bold mb-6 uppercase text-blue-400 italic">Quick Promote</h3>
-                <input type="text" id="promoId" placeholder="Enter Username" class="w-full p-4 bg-black/40 border border-white/10 rounded-2xl text-xs mb-4 outline-none focus:border-blue-500">
-                <button id="btnQuickVip" class="w-full py-4 bg-blue-600 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-500 transition">Authorize VIP Node</button>
+            <div class="glass p-8 border border-blue-500/10">
+                <h3 class="text-lg font-bold mb-6 uppercase text-blue-400 italic">Quick Rank Upgrade</h3>
+                <input type="text" id="promoId" placeholder="Username (e.g. hammad)" class="w-full p-4 rounded-2xl text-xs mb-4">
+                <button id="btnQuickVip" class="w-full py-4 bg-blue-600 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-500 transition shadow-lg shadow-blue-600/20">Upgrade to VIP</button>
             </div>
 
-            <div class="glass p-8">
-                <h3 class="text-lg font-bold mb-6 uppercase text-gray-400 italic">Official Relay</h3>
+            <div class="glass p-8 border border-white/5">
+                <h3 class="text-lg font-bold mb-6 uppercase text-gray-400 italic">Send Official Mail</h3>
                 <div class="space-y-4">
-                    <input type="text" id="msgTarget" placeholder="Target ID" class="w-full p-4 bg-black/40 border border-white/10 rounded-2xl text-xs outline-none">
-                    <input type="text" id="msgSub" placeholder="Subject" class="w-full p-4 bg-black/40 border border-white/10 rounded-2xl text-xs outline-none">
-                    <textarea id="msgBody" rows="4" placeholder="Message content..." class="w-full p-4 bg-black/40 border border-white/10 rounded-2xl text-xs outline-none resize-none"></textarea>
-                    <button id="btnSendMsg" class="w-full py-4 bg-white text-black rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-500 hover:text-white transition">Send Official Mail</button>
+                    <input type="text" id="msgTarget" placeholder="Target Username" class="w-full p-4 rounded-2xl text-xs">
+                    <input type="text" id="msgSub" placeholder="Subject" class="w-full p-4 rounded-2xl text-xs">
+                    <textarea id="msgBody" rows="4" placeholder="Type message here..." class="w-full p-4 rounded-2xl text-xs resize-none"></textarea>
+                    <button id="btnSendMsg" class="w-full py-4 bg-white text-black rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-600 hover:text-white transition">Dispatch Message</button>
                 </div>
             </div>
         </div>
@@ -114,7 +117,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // 1. LISTEN FOR VIP REQUESTS
+        // 1. VIP REQUESTS REAL-TIME
         onValue(ref(db, 'paradox_ecosystem/vip_requests'), (snapshot) => {
             const list = document.getElementById('vipRequestList');
             list.innerHTML = "";
@@ -123,22 +126,22 @@
                 for(let key in reqs){
                     const r = reqs[key];
                     list.innerHTML += `
-                        <tr class="border-b border-white/5 hover:bg-white/[0.02]">
+                        <tr class="border-b border-white/5 hover:bg-white/[0.02] transition">
                             <td class="py-4 font-bold text-yellow-500">@${r.username}</td>
                             <td class="py-4 text-gray-400 text-xs">${r.gmail}</td>
                             <td class="py-4 mono text-blue-400 text-[10px]">${r.trxID}</td>
                             <td class="py-4 text-right">
-                                <button onclick="approveVip('${r.username}', '${key}')" class="bg-yellow-600 text-black px-3 py-1 rounded-lg text-[10px] font-bold uppercase">Approve</button>
+                                <button onclick="approveVip('${r.username}', '${key}')" class="bg-yellow-600 text-black px-3 py-1 rounded-lg text-[10px] font-bold uppercase hover:bg-yellow-500 transition">Approve</button>
                             </td>
                         </tr>
                     `;
                 }
             } else {
-                list.innerHTML = "<tr><td colspan='4' class='py-10 text-center text-gray-600 italic'>No pending requests</td></tr>";
+                list.innerHTML = "<tr><td colspan='4' class='py-10 text-center text-gray-600 italic'>No new payment requests</td></tr>";
             }
         });
 
-        // 2. LISTEN FOR USERS
+        // 2. USER DATABASE REAL-TIME
         onValue(ref(db, 'paradox_ecosystem/users'), (snapshot) => {
             const body = document.getElementById('userListBody');
             body.innerHTML = "";
@@ -151,10 +154,10 @@
                             <td class="py-4 font-bold text-blue-400">@${id}</td>
                             <td class="py-4 text-gray-400">${u.fullName}</td>
                             <td class="py-4">
-                                <span class="text-[9px] font-bold px-2 py-1 rounded ${u.rank === 'VIP' ? 'bg-yellow-500/10 text-yellow-500' : 'bg-blue-500/10 text-blue-500'}">${u.rank || 'Standard'}</span>
+                                <span class="text-[9px] font-black px-2 py-1 rounded uppercase tracking-tighter ${u.rank === 'VIP' ? 'bg-yellow-500/10 text-yellow-500' : 'bg-blue-500/10 text-blue-500'}">${u.rank || 'Standard'}</span>
                             </td>
                             <td class="py-4 text-right">
-                                <button onclick="deleteUser('${id}')" class="text-gray-700 hover:text-red-500"><i class="fas fa-trash"></i></button>
+                                <button onclick="deleteUser('${id}')" class="text-gray-700 hover:text-red-500 transition"><i class="fas fa-trash"></i></button>
                             </td>
                         </tr>
                     `;
@@ -162,48 +165,82 @@
             }
         });
 
-        // 3. APPROVE VIP FUNCTION
+        // 3. APPROVE VIP SYSTEM
         window.approveVip = async (username, reqKey) => {
-            if(confirm(`Approve VIP for ${username}?`)) {
+            if(confirm(`Confirm VIP Upgrade for ${username}?`)) {
                 try {
-                    // Update user rank
+                    // Update User Rank in Cloud
                     await update(ref(db, `paradox_ecosystem/users/${username}`), {
                         rank: "VIP",
                         identity: username + ".paradox.pk"
                     });
-                    // Delete the request
+                    
+                    // Remove Request from List
                     await remove(ref(db, `paradox_ecosystem/vip_requests/${reqKey}`));
-                    // Send welcome mail
-                    await push(ref(db, `paradox_ecosystem/mails/${username}`), {
-                        senderID: "OFFICIAL",
-                        senderName: "Paradox Studio",
+
+                    // Send Auto Welcome Mail to user's Inbox node
+                    const mailRef = ref(db, 'paradox_ecosystem/mails/' + username);
+                    await push(mailRef, {
+                        senderID: "HQ",
+                        senderName: "Paradox Official",
                         subject: "👑 VIP Activated",
-                        body: "Congratulations! Your VIP identity node has been activated successfully.",
+                        body: "Welcome! Your VIP account is now live. Your new identity is " + username + ".paradox.pk",
                         timestamp: Date.now(),
                         isNew: true
                     });
-                    alert("User promoted and notified!");
-                } catch(e) { alert("Error!"); }
+                    
+                    alert("User " + username + " is now VIP.");
+                } catch(e) { alert("Action Failed."); }
             }
         };
 
-        // 4. QUICK PROMOTE
+        // 4. OFFICIAL MAIL RELAY (FIXED PATH)
+        document.getElementById('btnSendMsg').onclick = async () => {
+            const target = document.getElementById('msgTarget').value.trim().toLowerCase();
+            const sub = document.getElementById('msgSub').value.trim();
+            const msg = document.getElementById('msgBody').value.trim();
+
+            if(!target || !msg) return alert("Please fill Username and Message.");
+
+            try {
+                // Pehle check karo user hai bhi ke nahi
+                const userSnap = await get(ref(db, 'paradox_ecosystem/users/' + target));
+                if(!userSnap.exists()) return alert("User not found!");
+
+                // Seedha us user ke mail node mein bhejo
+                const mailRef = ref(db, 'paradox_ecosystem/mails/' + target);
+                await push(mailRef, {
+                    senderID: "OFFICIAL",
+                    senderName: "Paradox Studio HQ",
+                    subject: "💠 " + sub,
+                    body: msg,
+                    timestamp: Date.now(),
+                    isNew: true
+                });
+
+                alert("Mail delivered to " + target);
+                document.getElementById('msgSub').value = "";
+                document.getElementById('msgBody').value = "";
+            } catch(e) { alert("Relay Error."); }
+        };
+
+        // 5. QUICK TOOLS
         document.getElementById('btnQuickVip').onclick = async () => {
             const id = document.getElementById('promoId').value.trim().toLowerCase();
             if(!id) return;
             await update(ref(db, `paradox_ecosystem/users/${id}`), { rank: "VIP", identity: id + ".paradox.pk" });
-            alert("Promoted!");
+            alert("Node Elevated!");
         };
 
-        // 5. DELETE USER
         window.deleteUser = async (id) => {
-            if(confirm(`Purge user @${id}?`)) {
+            if(confirm(`Terminate node @${id}?`)) {
                 await remove(ref(db, `paradox_ecosystem/users/${id}`));
-                alert("Deleted.");
+                await remove(ref(db, `paradox_ecosystem/mails/${id}`));
+                alert("Node Purged.");
             }
-        }
+        };
 
-        // CLOCK
+        // Live Clock
         setInterval(() => { document.getElementById('timer').innerText = new Date().toLocaleTimeString('en-GB'); }, 1000);
     </script>
 </body>
