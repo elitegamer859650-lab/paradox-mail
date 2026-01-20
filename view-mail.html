@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decrypting | Paradox Secure Relay</title>
+    
+    <meta name="description" content="Paradox Mail Decryption Terminal. Authorized data retrieval for Paradox Identity nodes.">
+    <link rel="icon" type="image/png" href="icon.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@300;800&display=swap');
+        
+        body { background: #020617; font-family: 'Plus Jakarta Sans', sans-serif; color: white; overflow-x: hidden; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* TERMINAL INTERFACE */
+        .terminal-container {
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+        }
+
+        .scanning-bar {
+            width: 100%;
+            height: 2px;
+            background: #2563eb;
+            position: absolute;
+            top: 0;
+            left: 0;
+            animation: scan 3s infinite linear;
+            box-shadow: 0 0 15px #2563eb;
+        }
+
+        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+
+        .loading-shimmer {
+            background: linear-gradient(90deg, transparent, rgba(37, 99, 235, 0.1), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]">
+
+    <div class="max-w-4xl w-full terminal-container rounded-[3rem] p-10 md:p-16 relative overflow-hidden">
+        <div class="scanning-bar"></div>
+        
+        <div class="mb-12 border-b border-white/5 pb-8 relative z-10">
+            <div class="flex justify-between items-start mb-6">
+                <button onclick="window.location.href='inbox.html'" class="text-[10px] mono text-blue-500 uppercase tracking-[0.3em] hover:text-white transition">
+                    <i class="fas fa-arrow-left mr-2"></i> Terminate_Session
+                </button>
+                <div class="text-right mono text-[9px] text-gray-600">
+                    PACKET_ID: <span id="displayId" class="text-blue-900 font-bold">...</span> <br>
+                    PROTOCOL: SECURE_RELAY_V2
+                </div>
+            </div>
+            
+            <h1 id="mSubject" class="text-4xl md:text-5xl font-black uppercase italic tracking-tighter leading-none mb-6 text-blue-500">Initializing Decryption...</h1>
+            
+            <div class="flex flex-wrap gap-6 mt-8">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-blue-600/10 flex items-center justify-center text-blue-500"><i class="fas fa-user-shield text-xs"></i></div>
+                    <div>
+                        <p class="text-[8px] uppercase text-gray-500 font-bold tracking-widest">Source Node</p>
+                        <p id="mFrom" class="text-xs font-bold italic">Waiting for handshake...</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-blue-600/10 flex items-center justify-center text-blue-500"><i class="fas fa-clock text-xs"></i></div>
+                    <div>
+                        <p class="text-[8px] uppercase text-gray-500 font-bold tracking-widest">Timestamp</p>
+                        <p id="mTime" class="text-xs font-bold italic">Synchronizing...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="relative min-h-[300px] bg-black/40 rounded-[2rem] border border-white/5 p-8 md:p-10">
+            <div id="shimmer" class="absolute inset-0 loading-shimmer rounded-[2rem]"></div>
+            <p id="mBody" class="text-gray-400 leading-relaxed text-sm md:text-lg italic relative z-10 whitespace-pre-wrap">
+                Attempting to bridge connection to Paradox node... 
+                Authenticating session tokens...
+                Retrieving encrypted data packets from Firebase Cloud...
+            </p>
+        </div>
+
+        <div class="mt-12 flex flex-wrap gap-4 relative z-10">
+            <button onclick="window.location.href='send-mail.html'" class="px-10 py-4 bg-blue-600 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-blue-600/20 hover:scale-105 transition">Reply Transmission</button>
+            <button onclick="window.print()" class="px-8 py-4 glass-panel border border-white/10 rounded-2xl font-black uppercase tracking-widest text-[10px] text-gray-500 hover:text-white transition">Print Log</button>
+        </div>
+
+        <div class="mt-10 pt-6 border-t border-white/5 flex justify-between items-center mono text-[8px] text-gray-700 uppercase">
+            <span>Verified by Paradox Studio</span>
+            <span class="text-blue-900">Official.Paradox.Pk</span>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        // FIREBASE CONFIG (Aap ka provided)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBJ19zQAzBoqrr-_wS0YRpNeKv4qjDFsVE",
+            authDomain: "paradox-mail-official.firebaseapp.com",
+            databaseURL: "https://paradox-mail-official-default-rtdb.firebaseio.com",
+            projectId: "paradox-mail-official",
+            storageBucket: "paradox-mail-official.firebasestorage.app",
+            messagingSenderId: "249590854132",
+            appId: "1:249590854132:web:27e6b3535d0e2dd850c9a1"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // GET MAIL ID
+        const urlParams = new URLSearchParams(window.location.search);
+        const mailId = urlParams.get('id');
+        const session = JSON.parse(localStorage.getItem('paradox_active_session'));
+
+        if(!mailId || !session) {
+            window.location.href = "inbox.html";
+        } else {
+            document.getElementById('displayId').innerText = mailId.toUpperCase();
+            loadMail();
+        }
+
+        async function loadMail() {
+            try {
+                const mailRef = ref(db, `paradox_ecosystem/mails/${session.user}/${mailId}`);
+                const snap = await get(mailRef);
+
+                if(snap.exists()) {
+                    const data = snap.val();
+                    
+                    // Simulate Decryption delay for professional feel
+                    setTimeout(() => {
+                        document.getElementById('shimmer').classList.add('hidden');
+                        document.getElementById('mSubject').innerText = data.subject;
+                        document.getElementById('mFrom').innerText = `${data.senderName} (@${data.senderID})`;
+                        document.getElementById('mTime').innerText = new Date(data.timestamp).toLocaleString();
+                        document.getElementById('mBody').innerText = data.body;
+                        document.getElementById('mSubject').classList.remove('text-blue-500');
+                        document.getElementById('mSubject').classList.add('text-white');
+                    }, 1500);
+                } else {
+                    document.getElementById('mBody').innerText = "ERROR: Transmission node has been purged or moved.";
+                }
+            } catch (e) {
+                document.getElementById('mBody').innerText = "CRITICAL: Core connection failed.";
+            }
+        }
+    </script>
+</body>
+</html>
