@@ -247,6 +247,19 @@
         // Initialize on load
         window.onload = syncEcosystemState;
     </script>
+    <script>
+  (function() {
+    const hostname = window.location.hostname;
+    const parts = hostname.split('.');
+    
+    // Agar subdomain 'official' ya kuch aur hai (localhost aur main domain ko chhor kar)
+    if (parts.length > 2 && parts[0] !== 'www' && parts[0] !== 'paradox-studio') {
+      const subdomain = parts[0];
+      // Pehle middleware rewrite kar raha tha, ab hum redirect karenge
+      window.location.href = `/vip/${subdomain}.html`; 
+    }
+  })();
+</script>
 
 </body>
 </html>
