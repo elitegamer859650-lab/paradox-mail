@@ -3,12 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <title>Paradox Mail | The Ultimate Digital Identity Ecosystem</title>
-    <meta name="description" content="Paradox Studio is a next-generation technology hub specializing in secure SSO protocols, VIP .pk identities, and high-performance web deployments.">
-    <meta name="keywords" content="Paradox Studio, Paradox ID, SSO, Web Development Pakistan, VIP Identity, Serverless Architecture">
-    <meta name="author" content="Paradox Studio Official">
-    
+    <meta name="description" content="Paradox Studio is a next-generation technology hub specializing in secure SSO protocols.">
     <link rel="icon" type="image/png" href="icon.png">
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -18,8 +14,13 @@
       (function() {
         const hostname = window.location.hostname;
         const parts = hostname.split('.');
-        if (parts.length > 2 && parts[0] !== 'www' && parts[0] !== 'paradox-studio' && !hostname.includes('localhost')) {
+        
+        // Vercel ke default URL ko skip karne ke liye check
+        const isVercelBase = hostname.includes('vercel.app') && parts.length <= 3;
+
+        if (!isVercelBase && parts.length > 2 && parts[0] !== 'www' && parts[0] !== 'paradox-studio' && !hostname.includes('localhost')) {
           const subdomain = parts[0];
+          // Redirect to VIP folder
           window.location.href = `/vip/${subdomain}.html`; 
         }
       })();
@@ -27,20 +28,12 @@
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;800&family=JetBrains+Mono:wght@400;700&display=swap');
-        
-        :root {
-            --bg-dark: #02040a;
-            --accent-blue: #2563eb;
-            --accent-glow: rgba(37, 99, 235, 0.4);
-        }
-
+        :root { --bg-dark: #02040a; --accent-blue: #2563eb; --accent-glow: rgba(37, 99, 235, 0.4); }
         body { background-color: var(--bg-dark); font-family: 'Plus Jakarta Sans', sans-serif; color: white; overflow-x: hidden; scroll-behavior: smooth; }
         .mono { font-family: 'JetBrains Mono', monospace; }
         .grid-bg { background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px); background-size: 50px 50px; }
         .glass-panel { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 24px; }
         .text-glow { text-shadow: 0 0 20px rgba(37, 99, 235, 0.6); }
-        @keyframes subtle-float { 0% { transform: translateY(0px); } 50% { transform: translateY(-15px); } 100% { transform: translateY(0px); } }
-        .float { animation: subtle-float 5s ease-in-out infinite; }
     </style>
 </head>
 <body class="grid-bg">
@@ -56,7 +49,6 @@
         <div class="hidden lg:flex gap-10 items-center text-sm font-semibold uppercase tracking-widest text-gray-400">
             <a href="#about" class="hover:text-blue-500 transition">Infrastructure</a>
             <a href="#services" class="hover:text-blue-500 transition">Ecosystem</a>
-            <a href="#identity" class="hover:text-blue-500 transition">Identity</a>
             <a href="auth-gateway.html" id="navAuthBtn" class="bg-blue-600/10 border border-blue-500/30 px-6 py-2 rounded-full text-blue-400 hover:bg-blue-600 hover:text-white transition">Deploy Identity</a>
         </div>
     </nav>
@@ -64,11 +56,11 @@
     <header class="min-h-screen flex flex-col items-center justify-center text-center px-6 relative">
         <div class="space-y-6 max-w-5xl z-10">
             <span class="mono text-blue-500 text-sm font-bold border border-blue-500/30 px-4 py-1 rounded-full bg-blue-500/5">SYSTEMS_ONLINE: PARADOX_CORE</span>
-            <h1 class="text-7xl md:text-[120px] font-[800] leading-[0.9] tracking-tighter text-glow">
-                DEFINING THE <br> <span class="text-blue-600">PARADOX</span>
+            <h1 class="text-7xl md:text-[110px] font-[800] leading-[0.9] tracking-tighter text-glow uppercase">
+                Defining the <br> <span class="text-blue-600">Paradox</span>
             </h1>
             <p class="text-gray-400 text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed">
-                A globally scalable, multi-tenant ecosystem engineered for high-performance deployments via the proprietary <strong>Paradox SSO Protocol</strong>.
+                Experience frictionless authentication via the proprietary <strong>Paradox SSO Protocol</strong>.
             </p>
             <div class="flex flex-wrap justify-center gap-6 pt-10">
                 <button onclick="handleHeroAction()" id="heroMainBtn" class="px-10 py-5 bg-blue-600 rounded-2xl font-black text-lg shadow-xl shadow-blue-500/20 hover:scale-105 transition">EXPLORE CORE</button>
@@ -80,59 +72,44 @@
     <section id="services" class="py-40 bg-white/[0.01] border-y border-white/5">
         <div class="max-w-7xl mx-auto px-6 text-center">
             <h2 class="text-6xl font-black uppercase tracking-tight mb-20">The <span class="text-blue-500">Ecosystem</span></h2>
-            <div class="grid md:grid-cols-3 gap-10">
+            <div class="grid md:grid-cols-2 gap-10">
                 <div class="glass-panel p-10 hover:border-blue-500/50 transition cursor-pointer" onclick="handleHeroAction()">
                     <i class="fas fa-microchip text-4xl text-blue-500 mb-8"></i>
                     <h3 class="text-3xl font-bold mb-6">Paradox Mail</h3>
-                    <p class="text-gray-400 italic mb-6">Unified credentials for every project in the ecosystem.</p>
-                    <span class="text-blue-500 font-bold uppercase text-xs tracking-widest">Global Protocol</span>
+                    <p class="text-gray-400 italic">Unified credentials for elite studio members.</p>
                 </div>
-                <div class="glass-panel p-10 border-blue-500/30 shadow-[0_0_30px_rgba(37,99,235,0.1)]">
+                <div class="glass-panel p-10 border-blue-500/30">
                     <i class="fas fa-crown text-4xl text-blue-500 mb-8"></i>
                     <h3 class="text-3xl font-bold mb-6">VIP Domains</h3>
-                    <p class="text-gray-400 italic mb-6">Exclusive <span class="text-blue-400">username.paradox.pk</span> nodes.</p>
-                    <span class="text-yellow-500 font-bold uppercase text-xs tracking-widest">VIP Exclusive</span>
-                </div>
-                <div class="glass-panel p-10 hover:border-blue-500/50 transition">
-                    <i class="fas fa-broadcast-tower text-4xl text-blue-500 mb-8"></i>
-                    <h3 class="text-3xl font-bold mb-6">Cloud Relays</h3>
-                    <p class="text-gray-400 italic mb-6">Ultra-fast communication for real-time data sync.</p>
-                    <span class="text-blue-500 font-bold uppercase text-xs tracking-widest">Real-time Fabric</span>
+                    <p class="text-gray-400 italic">Personalized <span class="text-blue-400">username.paradox.pk</span> nodes.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <footer class="py-20 border-t border-white/5 bg-black">
-        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-gray-500 text-[10px] tracking-[0.3em] uppercase">
+        <div class="max-w-7xl mx-auto px-6 text-center text-gray-500 text-[10px] tracking-[0.3em] uppercase">
             <p>© 2026 Paradox Studio | Official.Paradox.Pk</p>
-            <div class="flex gap-6 mt-6 md:mt-0">
-                <i class="fab fa-discord text-lg hover:text-white transition"></i>
-                <i class="fab fa-github text-lg hover:text-white transition"></i>
-            </div>
         </div>
     </footer>
 
     <script>
-        function syncEcosystemState() {
+        function syncUI() {
             const session = localStorage.getItem('paradox_active_session');
             const navBtn = document.getElementById('navAuthBtn');
             const heroBtn = document.getElementById('heroMainBtn');
-
             if (session) {
                 navBtn.innerText = "ACCESS INBOX";
                 navBtn.href = "inbox.html";
-                navBtn.classList.add('text-green-400', 'border-green-500/30');
+                navBtn.classList.replace('text-blue-400', 'text-green-400');
                 heroBtn.innerText = "GO TO INBOX";
             }
         }
-
         function handleHeroAction() {
             const session = localStorage.getItem('paradox_active_session');
             window.location.href = session ? "inbox.html" : "auth-gateway.html";
         }
-
-        window.onload = syncEcosystemState;
+        window.onload = syncUI;
     </script>
 </body>
 </html>
