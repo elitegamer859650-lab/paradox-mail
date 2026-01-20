@@ -46,7 +46,6 @@
 
         .mono { font-family: 'JetBrains Mono', monospace; }
 
-        /* GRID BACKGROUND */
         .grid-bg {
             background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
                               linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
@@ -93,7 +92,7 @@
             <a href="#about" class="hover:text-blue-500 transition">Infrastructure</a>
             <a href="#services" class="hover:text-blue-500 transition">Ecosystem</a>
             <a href="#identity" class="hover:text-blue-500 transition">Identity</a>
-            <a href="auth-gateway.html" class="bg-blue-600/10 border border-blue-500/30 px-6 py-2 rounded-full text-blue-400 hover:bg-blue-600 hover:text-white transition">Deploy Identity</a>
+            <a href="auth-gateway.html" id="navAuthBtn" class="bg-blue-600/10 border border-blue-500/30 px-6 py-2 rounded-full text-blue-400 hover:bg-blue-600 hover:text-white transition">Deploy Identity</a>
         </div>
     </nav>
 
@@ -110,8 +109,8 @@
                 A globally scalable, multi-tenant ecosystem engineered for high-performance deployments. Experience frictionless authentication via the proprietary <strong>Paradox SSO Protocol</strong>.
             </p>
             <div class="flex flex-wrap justify-center gap-6 pt-10">
-                <button class="px-10 py-5 bg-blue-600 rounded-2xl font-black text-lg shadow-xl shadow-blue-500/20 hover:scale-105 transition">EXPLORE CORE</button>
-                <button class="px-10 py-5 glass-panel font-black text-lg hover:bg-white/5 transition">VIEW PROJECTS</button>
+                <button onclick="handleHeroAction()" id="heroMainBtn" class="px-10 py-5 bg-blue-600 rounded-2xl font-black text-lg shadow-xl shadow-blue-500/20 hover:scale-105 transition">EXPLORE CORE</button>
+                <button onclick="document.getElementById('services').scrollIntoView()" class="px-10 py-5 glass-panel font-black text-lg hover:bg-white/5 transition">VIEW PROJECTS</button>
             </div>
         </div>
     </header>
@@ -165,9 +164,9 @@
             </div>
 
             <div class="grid md:grid-cols-3 gap-10">
-                <div class="glass-panel p-10 hover:border-blue-500/50 transition-all duration-700">
+                <div class="glass-panel p-10 hover:border-blue-500/50 transition-all duration-700 cursor-pointer" onclick="location.href='inbox.html'">
                     <i class="fas fa-microchip text-4xl text-blue-500 mb-8"></i>
-                    <h3 class="text-3xl font-bold mb-6">Paradox ID</h3>
+                    <h3 class="text-3xl font-bold mb-6">Paradox Mail</h3>
                     <p class="text-gray-400 leading-relaxed italic mb-6">
                         Unified credentials for the entire Paradox network. One identity to rule every project, from gaming hubs to market systems.
                     </p>
@@ -215,6 +214,39 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        // Check session and update UI
+        function syncEcosystemState() {
+            const session = localStorage.getItem('paradox_active_session');
+            const navBtn = document.getElementById('navAuthBtn');
+            const heroBtn = document.getElementById('heroMainBtn');
+
+            if (session) {
+                const userData = JSON.parse(session);
+                // Update Nav Button
+                navBtn.innerText = "ACCESS INBOX";
+                navBtn.href = "inbox.html";
+                navBtn.classList.replace('text-blue-400', 'text-green-400');
+                navBtn.classList.replace('border-blue-500/30', 'border-green-500/30');
+
+                // Update Hero Button
+                heroBtn.innerText = "GO TO INBOX";
+            }
+        }
+
+        function handleHeroAction() {
+            const session = localStorage.getItem('paradox_active_session');
+            if (session) {
+                window.location.href = "inbox.html";
+            } else {
+                window.location.href = "auth-gateway.html";
+            }
+        }
+
+        // Initialize on load
+        window.onload = syncEcosystemState;
+    </script>
 
 </body>
 </html>
