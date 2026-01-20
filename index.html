@@ -3,72 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <title>Paradox Mail | The Ultimate Digital Identity Ecosystem</title>
+    
     <meta name="description" content="Paradox Studio is a next-generation technology hub specializing in secure SSO protocols, VIP .pk identities, and high-performance web deployments.">
     <meta name="keywords" content="Paradox Studio, Paradox ID, SSO, Web Development Pakistan, VIP Identity, Serverless Architecture">
     <meta name="author" content="Paradox Studio Official">
-    
     <link rel="icon" type="image/png" href="icon.png">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
-    <script>
-      (function() {
-        const hostname = window.location.hostname;
-        const parts = hostname.split('.');
-        
-        // Vercel link par redirect na ho, isliye check
-        const isVercelBase = hostname.includes('vercel.app') && parts.length <= 3;
-
-        if (!isVercelBase && parts.length > 2 && parts[0] !== 'www' && parts[0] !== 'paradox-studio' && !hostname.includes('localhost')) {
-          const subdomain = parts[0];
-          window.location.href = `/vip/${subdomain}.html`; 
-        }
-      })();
-    </script>
-
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;800&family=JetBrains+Mono:wght@400;700&display=swap');
-        
-        :root {
-            --bg-dark: #02040a;
-            --accent-blue: #2563eb;
-            --accent-glow: rgba(37, 99, 235, 0.4);
-        }
-
-        body { 
-            background-color: var(--bg-dark); 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            color: white;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-        }
-
+        :root { --bg-dark: #02040a; --accent-blue: #2563eb; --accent-glow: rgba(37, 99, 235, 0.4); }
+        body { background-color: var(--bg-dark); font-family: 'Plus Jakarta Sans', sans-serif; color: white; overflow-x: hidden; scroll-behavior: smooth; }
         .mono { font-family: 'JetBrains Mono', monospace; }
-
-        .grid-bg {
-            background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
-        }
-
-        .glass-panel {
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 24px;
-        }
-
+        .grid-bg { background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px); background-size: 50px 50px; }
+        .glass-panel { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 24px; }
         .text-glow { text-shadow: 0 0 20px rgba(37, 99, 235, 0.6); }
-
-        @keyframes subtle-float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0px); }
-        }
-        .float { animation: subtle-float 5s ease-in-out infinite; }
+        
+        /* Floating Animation */
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        .float-anim { animation: float 6s ease-in-out infinite; }
+        
+        /* Hero Gradient */
+        .gradient-blur { position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%); filter: blur(100px); z-index: -1; opacity: 0.5; }
     </style>
 </head>
 <body class="grid-bg">
@@ -77,7 +36,7 @@
         <div class="flex items-center gap-4">
             <img src="icon.png" alt="Paradox Logo" class="w-10 h-10 rounded-xl shadow-[0_0_15px_var(--accent-glow)]">
             <div class="leading-tight">
-                <span class="block text-lg font-extrabold tracking-tighter uppercase">Paradox <span class="text-blue-500">Studio</span></span>
+                <span class="block text-lg font-extrabold tracking-tighter uppercase italic">Paradox <span class="text-blue-500">Studio</span></span>
                 <span class="block text-[10px] mono text-gray-500 tracking-widest uppercase">Ecosystem Core v2.0</span>
             </div>
         </div>
@@ -90,13 +49,14 @@
     </nav>
 
     <header class="min-h-screen flex flex-col items-center justify-center text-center px-6 relative">
+        <div class="gradient-blur top-0"></div>
         <div class="space-y-6 max-w-5xl z-10">
             <span class="mono text-blue-500 text-sm font-bold border border-blue-500/30 px-4 py-1 rounded-full bg-blue-500/5">SYSTEMS_ONLINE: PARADOX_CORE</span>
-            <h1 class="text-7xl md:text-[120px] font-[800] leading-[0.9] tracking-tighter text-glow uppercase">
+            <h1 class="text-7xl md:text-[120px] font-[800] leading-[0.9] tracking-tighter text-glow uppercase italic">
                 DEFINING THE <br> <span class="text-blue-600">PARADOX</span>
             </h1>
             <p class="text-gray-400 text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed">
-                A globally scalable, multi-tenant ecosystem engineered for high-performance deployments via the proprietary <strong>Paradox SSO Protocol</strong>.
+                A globally scalable, multi-tenant ecosystem engineered for high-performance deployments. Experience frictionless authentication.
             </p>
             <div class="flex flex-wrap justify-center gap-6 pt-10">
                 <button onclick="handleHeroAction()" id="heroMainBtn" class="px-10 py-5 bg-blue-600 rounded-2xl font-black text-lg shadow-xl shadow-blue-500/20 hover:scale-105 transition">EXPLORE CORE</button>
@@ -105,33 +65,100 @@
         </div>
     </header>
 
+    <section id="about" class="py-40 px-6 max-w-7xl mx-auto">
+        <div class="grid lg:grid-cols-2 gap-20 items-center">
+            <div class="space-y-8">
+                <h2 class="text-5xl font-extrabold uppercase italic tracking-tighter">Advanced <br> Infrastructure</h2>
+                <div class="space-y-6 text-gray-400 text-lg leading-relaxed italic">
+                    <p>Paradox Studio leverages a <strong>Serverless Distributed Network</strong> architecture. Our core logic executes at the network edge, ensuring extreme resilience.</p>
+                    <p>By implementing a <strong>Zero-Trust Security Model</strong>, we ensure that every digital transmission is validated against our cryptographically secure protocols.</p>
+                </div>
+                <div class="flex gap-10 pt-6 border-t border-white/5">
+                    <div><p class="text-3xl font-bold text-blue-500">99.9%</p><p class="text-[10px] uppercase text-gray-600 mono">Uptime</p></div>
+                    <div><p class="text-3xl font-bold text-blue-500">&lt;50ms</p><p class="text-[10px] uppercase text-gray-600 mono">Latency</p></div>
+                </div>
+            </div>
+            <div class="glass-panel p-10 float-anim">
+                <div class="mono text-[12px] text-blue-400 mb-6"> > SYSTEM_LOG: BOOTING_NODE...</div>
+                <pre class="text-xs text-gray-500 leading-6 italic">
+{
+  "node": "Paradox_Edge_01",
+  "security": "AES-256",
+  "identity": "Paradox_SSO",
+  "status": "SECURE",
+  "deployment": "Vercel_Edge"
+}</pre>
+            </div>
+        </div>
+    </section>
+
     <section id="services" class="py-40 bg-white/[0.01] border-y border-white/5">
-        <div class="max-w-7xl mx-auto px-6 text-center">
-            <h2 class="text-6xl font-black uppercase tracking-tight mb-20">The <span class="text-blue-500">Ecosystem</span></h2>
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-24">
+                <h2 class="text-6xl font-black uppercase italic tracking-tighter">The <span class="text-blue-500">Ecosystem</span></h2>
+                <p class="text-gray-500 mt-4 mono tracking-widest uppercase">Proprietary Identity Management</p>
+            </div>
             <div class="grid md:grid-cols-3 gap-10">
-                <div class="glass-panel p-10 hover:border-blue-500/50 transition cursor-pointer" onclick="handleHeroAction()">
+                <div class="glass-panel p-10 hover:border-blue-500/50 transition duration-500">
                     <i class="fas fa-microchip text-4xl text-blue-500 mb-8"></i>
-                    <h3 class="text-3xl font-bold mb-6">Paradox Mail</h3>
-                    <p class="text-gray-400 italic mb-6">Unified credentials for every project in the ecosystem.</p>
+                    <h3 class="text-2xl font-bold mb-4 uppercase italic">Paradox Mail</h3>
+                    <p class="text-gray-400 text-sm italic mb-6">Unified credentials for every project. One identity to rule the network.</p>
+                    <span class="text-blue-500 font-bold uppercase text-[10px] mono">Global Protocol</span>
                 </div>
                 <div class="glass-panel p-10 border-blue-500/30 shadow-[0_0_30px_rgba(37,99,235,0.1)]">
                     <i class="fas fa-crown text-4xl text-blue-500 mb-8"></i>
-                    <h3 class="text-3xl font-bold mb-6">VIP Domains</h3>
-                    <p class="text-gray-400 italic mb-6">Exclusive <span class="text-blue-400">username.paradox.pk</span> nodes.</p>
+                    <h3 class="text-2xl font-bold mb-4 uppercase italic">VIP Domains</h3>
+                    <p class="text-gray-400 text-sm italic mb-6">Exclusive <span class="text-blue-400">username.paradox.pk</span> subdomains for elite members.</p>
+                    <span class="text-yellow-500 font-bold uppercase text-[10px] mono">VIP Exclusive</span>
                 </div>
-                <div class="glass-panel p-10 hover:border-blue-500/50 transition">
+                <div class="glass-panel p-10 hover:border-blue-500/50 transition duration-500">
                     <i class="fas fa-broadcast-tower text-4xl text-blue-500 mb-8"></i>
-                    <h3 class="text-3xl font-bold mb-6">Cloud Relays</h3>
-                    <p class="text-gray-400 italic mb-6">Ultra-fast communication for real-time data sync.</p>
+                    <h3 class="text-2xl font-bold mb-4 uppercase italic">Cloud Relays</h3>
+                    <p class="text-gray-400 text-sm italic mb-6">Ultra-fast communication relays for real-time data sync across nodes.</p>
+                    <span class="text-blue-500 font-bold uppercase text-[10px] mono">Real-time Fabric</span>
                 </div>
             </div>
         </div>
     </section>
 
-    <footer class="py-20 border-t border-white/5 bg-black">
-        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-gray-500 text-[10px] tracking-[0.3em] uppercase">
-            <p>© 2026 Paradox Studio | Official.Paradox.Pk</p>
-            <div class="flex gap-6 mt-6 md:mt-0">
+    <section id="identity" class="py-40 px-6 max-w-5xl mx-auto text-center">
+        <div class="space-y-12">
+            <h2 class="text-5xl font-bold italic tracking-tighter uppercase">Strategic <span class="text-blue-600">Vision</span></h2>
+            <div class="text-2xl md:text-3xl text-gray-400 leading-[1.8] font-light italic">
+                "Paradox Studio is built on the philosophy that innovation is born from complexity. Our mission is to bridge the gap between architectural engineering and seamless user experience."
+            </div>
+            <div class="flex justify-center gap-12 opacity-30 mt-20">
+                <i class="fab fa-node-js text-5xl"></i><i class="fab fa-react text-5xl"></i><i class="fab fa-google text-5xl"></i>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-40 bg-black/50">
+        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-10">
+            <div class="p-8 border-l border-blue-500/30">
+                <h4 class="mono text-blue-500 text-xs mb-4 italic">> AUTH_PROTOCOL</h4>
+                <p class="text-gray-400 text-sm">Paradox SSO v2 utilizing OAuth3 standards and edge-side verification.</p>
+            </div>
+            <div class="p-8 border-l border-blue-500/30">
+                <h4 class="mono text-blue-500 text-xs mb-4 italic">> ENCRYPTION</h4>
+                <p class="text-gray-400 text-sm">Military-grade AES-256 GCM encryption for every packet dispatched.</p>
+            </div>
+            <div class="p-8 border-l border-blue-500/30">
+                <h4 class="mono text-blue-500 text-xs mb-4 italic">> STORAGE</h4>
+                <p class="text-gray-400 text-sm">Decentralized object storage with 100% data ownership for users.</p>
+            </div>
+            <div class="p-8 border-l border-blue-500/30">
+                <h4 class="mono text-blue-500 text-xs mb-4 italic">> NETWORK</h4>
+                <p class="text-gray-400 text-sm">Global CDN mesh network with zero cold-start latency on all routes.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-20 bg-black border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-gray-500 text-[10px] tracking-[0.4em] uppercase">
+            <p>© 2026 Paradox Studio | Core Architecture</p>
+            <p class="text-blue-500 font-black text-sm tracking-tighter italic">Official.Paradox.Pk</p>
+            <div class="flex gap-8 mt-6 md:mt-0">
                 <i class="fab fa-discord text-lg hover:text-white transition"></i>
                 <i class="fab fa-github text-lg hover:text-white transition"></i>
             </div>
@@ -139,26 +166,30 @@
     </footer>
 
     <script>
-        function syncEcosystemState() {
-            const session = localStorage.getItem('paradox_active_session');
-            const navBtn = document.getElementById('navAuthBtn');
-            const heroBtn = document.getElementById('heroMainBtn');
+        (function() {
+            const hostname = window.location.hostname;
+            const parts = hostname.split('.');
+            if (!hostname.includes('vercel.app') && parts.length > 2 && parts[0] !== 'www' && parts[0] !== 'paradox-studio') {
+                window.location.href = `/vip/${parts[0]}.html`;
+            }
+        })();
 
+        function syncUI() {
+            const session = localStorage.getItem('paradox_active_session');
             if (session) {
+                const navBtn = document.getElementById('navAuthBtn');
+                const heroBtn = document.getElementById('heroMainBtn');
                 navBtn.innerText = "ACCESS INBOX";
                 navBtn.href = "inbox.html";
-                navBtn.classList.replace('text-blue-400', 'text-green-400');
-                navBtn.classList.replace('border-blue-500/30', 'border-green-500/30');
+                navBtn.className = "bg-green-600/10 border border-green-500/30 px-6 py-2 rounded-full text-green-400 font-bold uppercase tracking-widest";
                 heroBtn.innerText = "GO TO INBOX";
             }
         }
 
         function handleHeroAction() {
-            const session = localStorage.getItem('paradox_active_session');
-            window.location.href = session ? "inbox.html" : "auth-gateway.html";
+            window.location.href = localStorage.getItem('paradox_active_session') ? "inbox.html" : "auth-gateway.html";
         }
-
-        window.onload = syncEcosystemState;
+        window.onload = syncUI;
     </script>
 </body>
 </html>
