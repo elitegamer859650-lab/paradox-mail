@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paradox Studio | Next-Gen Digital Ecosystem</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;800&family=JetBrains+Mono:wght@400;700&display=swap');
+        
+        :root {
+            --bg-dark: #02040a;
+            --accent-blue: #2563eb;
+            --accent-glow: rgba(37, 99, 235, 0.4);
+        }
+
+        body { 
+            background-color: var(--bg-dark); 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            color: white;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* Background Effects */
+        .grid-bg {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        .gradient-blur {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            filter: blur(80px);
+            z-index: -1;
+        }
+
+        /* Glassmorphism */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+        }
+
+        /* Animations */
+        @keyframes subtle-float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        .float { animation: subtle-float 5s ease-in-out infinite; }
+
+        .text-glow { text-shadow: 0 0 20px rgba(37, 99, 235, 0.6); }
+    </style>
+</head>
+<body class="grid-bg">
+
+    <nav class="fixed top-0 w-full z-50 p-6 flex justify-between items-center glass-panel m-4 w-[calc(100%-2rem)]">
+        <div class="flex items-center gap-4">
+            <img src="icon.png" class="w-10 h-10 rounded-xl shadow-[0_0_15px_var(--accent-glow)]">
+            <div class="leading-tight">
+                <span class="block text-lg font-extrabold tracking-tighter uppercase">Paradox <span class="text-blue-500">Studio</span></span>
+                <span class="block text-[10px] mono text-gray-500 tracking-widest uppercase">Ecosystem Core v2.0</span>
+            </div>
+        </div>
+        <div class="hidden lg:flex gap-10 items-center text-sm font-semibold uppercase tracking-widest text-gray-400">
+            <a href="#about" class="hover:text-blue-500 transition">Infrastructure</a>
+            <a href="#services" class="hover:text-blue-500 transition">Ecosystem</a>
+            <a href="#identity" class="hover:text-blue-500 transition">Identity</a>
+            <a href="#contact" class="bg-blue-600/10 border border-blue-500/30 px-6 py-2 rounded-full text-blue-400 hover:bg-blue-600 hover:text-white transition">Deploy Identity</a>
+        </div>
+    </nav>
+
+    <header class="min-h-screen flex flex-col items-center justify-center text-center px-6 relative">
+        <div class="gradient-blur top-[-100px] left-[-100px]"></div>
+        <div class="gradient-blur bottom-[-100px] right-[-100px]"></div>
+
+        <div class="space-y-6 max-w-5xl z-10">
+            <span class="mono text-blue-500 text-sm font-bold border border-blue-500/30 px-4 py-1 rounded-full bg-blue-500/5">INITIALIZING ARCHITECTURE...</span>
+            <h1 class="text-7xl md:text-[120px] font-[800] leading-[0.9] tracking-tighter text-glow">
+                DEFINING THE <br> <span class="text-blue-600">PARADOX</span>
+            </h1>
+            <p class="text-gray-400 text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed">
+                A highly scalable, multi-tenant ecosystem built for the next generation of web applications. Experience seamless authentication through our proprietary <strong>Paradox SSO Protocol</strong>.
+            </p>
+            <div class="flex flex-wrap justify-center gap-6 pt-10">
+                <button class="px-10 py-5 bg-blue-600 rounded-2xl font-black text-lg shadow-xl shadow-blue-500/20 hover:scale-105 transition">EXPLORE CORE</button>
+                <button class="px-10 py-5 glass-panel font-black text-lg hover:bg-white/5 transition">VIEW PROJECTS</button>
+            </div>
+        </div>
+    </header>
+
+    <section id="about" class="py-40 px-6 max-w-7xl mx-auto">
+        <div class="grid lg:grid-cols-2 gap-20 items-center">
+            <div class="space-y-8">
+                <h2 class="text-5xl font-extrabold uppercase italic">Advanced <br> Infrastructure</h2>
+                <div class="space-y-6 text-gray-400 text-lg leading-relaxed">
+                    <p>
+                        Paradox Studio operates on a <strong>Serverless Distributed Network</strong>. Our core logic is decoupled from traditional physical constraints, allowing for horizontal scalability across global edge locations.
+                    </p>
+                    <p>
+                        By implementing a <strong>Zero-Trust Security Model</strong>, we ensure that every Paradox Identity is validated against our cryptographically secure real-time database. Our infrastructure is optimized for sub-millisecond data retrieval.
+                    </p>
+                </div>
+                <div class="flex gap-10 pt-6 border-t border-white/5">
+                    <div>
+                        <p class="text-3xl font-bold text-blue-500">99.9%</p>
+                        <p class="text-xs uppercase text-gray-600">Uptime Reliability</p>
+                    </div>
+                    <div>
+                        <p class="text-3xl font-bold text-blue-500">&lt;50ms</p>
+                        <p class="text-xs uppercase text-gray-600">Global Latency</p>
+                    </div>
+                </div>
+            </div>
+            <div class="glass-panel p-8 relative overflow-hidden group">
+                <div class="mono text-[12px] text-blue-400 mb-6"> > SYSTEM_LOG: ACCESSING_FIREBASE_REALTIME_DB...</div>
+                <pre class="text-sm text-gray-500 leading-6 italic">
+{
+  "protocol": "Paradox_SSO_v2",
+  "encryption": "AES-256-GCM",
+  "tenant_id": "VIP_MEMBER_001",
+  "status": "OPERATIONAL",
+  "latency": "14ms",
+  "location": "Vercel_Edge_Node"
+}
+                </pre>
+                <div class="mt-8 p-4 bg-blue-600/10 rounded-xl border border-blue-500/20 text-center text-blue-400 font-bold">
+                    SECURE DATA FABRIC INITIALIZED
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="services" class="py-40 bg-white/[0.01] border-y border-white/5">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-24">
+                <h2 class="text-6xl font-black uppercase tracking-tight">Ecosystem <span class="text-blue-500">Architecture</span></h2>
+                <p class="text-gray-500 mt-4 mono tracking-widest uppercase">The future of unified authentication</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-10">
+                <div class="glass-panel p-10 hover:border-blue-500/50 transition-all duration-700 group">
+                    <i class="fas fa-envelope-open-text text-4xl text-blue-500 mb-8"></i>
+                    <h3 class="text-3xl font-bold mb-6">Paradox Mail</h3>
+                    <p class="text-gray-400 leading-relaxed mb-6 italic">
+                        A proprietary messaging relay system allowing seamless communication between Paradox Identities. No third-party tracking, pure end-to-end encrypted metadata routing.
+                    </p>
+                    <span class="text-blue-500 font-bold uppercase text-xs tracking-widest">Available for all @paradox.pk users</span>
+                </div>
+
+                <div class="glass-panel p-10 hover:border-blue-500/50 transition-all duration-700 border-blue-500/30 shadow-[0_0_30px_rgba(37,99,235,0.1)]">
+                    <i class="fas fa-globe text-4xl text-blue-500 mb-8"></i>
+                    <h3 class="text-3xl font-bold mb-6 italic">VIP.PK Identity</h3>
+                    <p class="text-gray-400 leading-relaxed mb-6 italic">
+                        Exclusive sub-domain tunneling for our premium partners. Get your personalized <span class="text-blue-400">username.paradox.pk</span> portal with full DNS control and custom themes.
+                    </p>
+                    <span class="text-yellow-500 font-bold uppercase text-xs tracking-widest">Exclusive VIP Access</span>
+                </div>
+
+                <div class="glass-panel p-10 hover:border-blue-500/50 transition-all duration-700 group">
+                    <i class="fas fa-gamepad text-4xl text-blue-500 mb-8"></i>
+                    <h3 class="text-3xl font-bold mb-6">GP Hub</h3>
+                    <p class="text-gray-400 leading-relaxed mb-6 italic">
+                        The ultimate integration for Free Fire and competitive gaming. Manage tournaments, track player statistics, and deploy real-time leaderboards through the Paradox API.
+                    </p>
+                    <span class="text-blue-500 font-bold uppercase text-xs tracking-widest">Powered by Real-time Sync</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-40 px-6 max-w-4xl mx-auto text-center">
+        <h2 class="text-4xl font-bold mb-12 italic tracking-tight uppercase">Paradox Mission Statement</h2>
+        <div class="text-xl md:text-2xl text-gray-400 leading-[1.8] font-light italic">
+            "At Paradox Studio, we believe that every problem is a blueprint for a new project. Our vision is to democratize professional web identities in Pakistan. By bridging the gap between high-level engineering and accessible design, we empower our users with the same tools used by global tech giants. We don't just build websites; we deploy digital legacies."
+        </div>
+        <div class="mt-16 flex justify-center gap-10">
+            <img src="https://img.icons8.com/color/48/000000/google-logo.png" class="opacity-30 hover:opacity-100 transition grayscale hover:grayscale-0">
+            <img src="https://img.icons8.com/color/48/000000/firebase.png" class="opacity-30 hover:opacity-100 transition grayscale hover:grayscale-0">
+            <img src="https://img.icons8.com/color/48/000000/visual-studio-code-2019.png" class="opacity-30 hover:opacity-100 transition grayscale hover:grayscale-0">
+        </div>
+    </section>
+
+    <footer class="py-20 border-t border-white/5 bg-black">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-gray-500 text-xs tracking-widest uppercase">
+            <p>© 2026 Paradox Studio | All Rights Reserved</p>
+            <p class="font-bold text-blue-500">Official.Paradox.Pk</p>
+            <div class="flex gap-6 mt-6 md:mt-0">
+                <i class="fab fa-discord text-lg hover:text-white transition cursor-pointer"></i>
+                <i class="fab fa-instagram text-lg hover:text-white transition cursor-pointer"></i>
+                <i class="fab fa-github text-lg hover:text-white transition cursor-pointer"></i>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
