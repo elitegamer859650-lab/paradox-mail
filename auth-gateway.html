@@ -3,79 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auth Gateway | Paradox Studio Identity</title>
+    <title>Paradox Login | Secure Mail</title>
     <link rel="icon" type="image/png" href="icon.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;800&family=JetBrains+Mono:wght@400;700&display=swap');
-        body { background: #02040a; font-family: 'Plus Jakarta Sans', sans-serif; color: white; overflow-x: hidden; }
-        .mono { font-family: 'JetBrains Mono', monospace; }
-        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .input-field { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); transition: 0.3s; }
-        .input-field:focus { border-color: #2563eb; outline: none; box-shadow: 0 0 20px rgba(37, 99, 235, 0.1); }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;800&display=swap');
         
-        .tab-active { border-bottom: 3px solid #2563eb; color: #2563eb; }
+        body { 
+            background: #05070a; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            color: white; 
+        }
+
+        .glass-box {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 32px;
+        }
+
+        .input-style {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .input-style:focus {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .tab-btn {
+            padding: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #64748b;
+            transition: 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab-btn.active {
+            color: #3b82f6;
+            border-bottom-color: #3b82f6;
+        }
+
+        .vip-tab.active {
+            color: #eab308;
+            border-bottom-color: #eab308;
+        }
+
         .hidden { display: none; }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
+<body class="min-h-screen flex items-center justify-center p-6">
 
-    <div class="glass w-full max-w-md p-10 rounded-[3rem] space-y-8 shadow-2xl relative overflow-hidden">
-        <div class="text-center space-y-3">
-            <img src="icon.png" class="w-16 h-16 mx-auto rounded-2xl shadow-xl shadow-blue-500/20">
-            <h2 class="text-3xl font-black uppercase italic tracking-tighter">Paradox <span class="text-blue-500">ID</span></h2>
-            <p class="text-[10px] mono text-gray-500 uppercase tracking-widest">Global Authentication Gateway</p>
+    <div class="glass-box w-full max-w-md p-10 shadow-2xl">
+        <div class="text-center mb-8">
+            <img src="icon.png" class="w-16 h-16 mx-auto rounded-2xl mb-4 shadow-lg shadow-blue-500/10">
+            <h1 class="text-2xl font-extrabold tracking-tight">Paradox <span class="text-blue-500">Mail</span></h1>
+            <p class="text-[11px] text-gray-500 font-medium uppercase tracking-widest mt-1">Personal & VIP Accounts</p>
         </div>
 
-        <div class="flex border-b border-white/5 text-xs font-black uppercase tracking-widest">
-            <button id="tabLogin" class="flex-1 py-4 tab-active transition">Login</button>
-            <button id="tabRegister" class="flex-1 py-4 text-gray-600 transition">Register</button>
+        <div class="flex mb-8 border-b border-white/5">
+            <button id="showLogin" class="tab-btn active flex-1">Login</button>
+            <button id="showRegister" class="tab-btn flex-1">Sign Up</button>
+            <button id="showVip" class="tab-btn flex-1 text-yellow-600">Get VIP</button>
         </div>
 
-        <div id="loginForm" class="space-y-5">
-            <div>
-                <label class="block text-[9px] mono text-gray-600 uppercase mb-2 ml-1">Identity ID</label>
-                <div class="relative">
-                    <input type="text" id="logUser" placeholder="username" class="input-field w-full p-4 rounded-2xl text-sm font-bold lowercase">
-                    <span class="absolute right-4 top-4 text-[10px] mono text-gray-700">@paradox.pk</span>
-                </div>
+        <div id="loginSection" class="space-y-4">
+            <div class="relative">
+                <input type="text" id="loginUser" placeholder="Username" class="input-style w-full p-4 rounded-2xl text-sm">
+                <span class="absolute right-4 top-4 text-[10px] text-gray-600 font-bold">@paradox.pk</span>
             </div>
-            <div>
-                <label class="block text-[9px] mono text-gray-600 uppercase mb-2 ml-1">Access Key</label>
-                <input type="password" id="logPass" placeholder="••••••••" class="input-field w-full p-4 rounded-2xl text-sm font-bold">
-            </div>
-            <button id="btnLogin" class="w-full py-4 bg-blue-600 rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-blue-500 transition-all">Authenticate Node</button>
+            <input type="password" id="loginPass" placeholder="Password" class="input-style w-full p-4 rounded-2xl text-sm">
+            <button id="doLogin" class="w-full py-4 bg-blue-600 hover:bg-blue-500 rounded-2xl font-bold text-sm transition shadow-lg shadow-blue-600/20">Login to Inbox</button>
         </div>
 
-        <div id="registerForm" class="space-y-5 hidden">
-            <div>
-                <label class="block text-[9px] mono text-gray-600 uppercase mb-2 ml-1">Full Legal Name</label>
-                <input type="text" id="regName" placeholder="Full Name" class="input-field w-full p-4 rounded-2xl text-sm font-bold">
+        <div id="registerSection" class="space-y-4 hidden">
+            <input type="text" id="regName" placeholder="Your Full Name" class="input-style w-full p-4 rounded-2xl text-sm">
+            <div class="relative">
+                <input type="text" id="regUser" placeholder="Choose Username" class="input-style w-full p-4 rounded-2xl text-sm lowercase">
+                <span class="absolute right-4 top-4 text-[10px] text-blue-500 font-bold">@paradox.pk</span>
             </div>
-            <div>
-                <label class="block text-[9px] mono text-gray-600 uppercase mb-2 ml-1">Choose Identity ID</label>
-                <div class="relative">
-                    <input type="text" id="regUser" placeholder="username" class="input-field w-full p-4 rounded-2xl text-sm font-bold lowercase">
-                    <span class="absolute right-4 top-4 text-[10px] mono text-blue-500 font-bold">@paradox.pk</span>
-                </div>
-                <p class="text-[8px] text-gray-700 mt-2 italic px-1">Your official mail: <span class="text-blue-900 mono" id="previewId">username@paradox.pk</span></p>
-            </div>
-            <div>
-                <label class="block text-[9px] mono text-gray-600 uppercase mb-2 ml-1">Secure Access Key</label>
-                <input type="password" id="regPass" placeholder="••••••••" class="input-field w-full p-4 rounded-2xl text-sm font-bold">
-            </div>
-            <button id="btnRegister" class="w-full py-4 bg-white text-black rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-blue-500 hover:text-white transition-all">Initialize Node</button>
+            <input type="password" id="regPass" placeholder="Create Password" class="input-style w-full p-4 rounded-2xl text-sm">
+            <button id="doRegister" class="w-full py-4 bg-white text-black hover:bg-gray-200 rounded-2xl font-bold text-sm transition">Create Account</button>
         </div>
 
-        <p class="text-center text-[8px] mono text-gray-800 uppercase tracking-widest pt-4">© 2026 Paradox Distributed Ecosystem</p>
+        <div id="vipSection" class="space-y-4 hidden text-center">
+            <div class="bg-yellow-500/5 p-6 rounded-3xl border border-yellow-500/10 mb-6">
+                <p class="text-xs text-yellow-500 font-bold uppercase tracking-widest">EasyPaisa Payment</p>
+                <h3 class="text-2xl font-black mt-2 text-white">+92 313 5583959</h3>
+                <p class="text-[10px] text-gray-500 mt-2 italic">Fee: 500 PKR (Lifetime VIP)</p>
+            </div>
+            
+            <input type="text" id="vipUser" placeholder="Your Paradox Username" class="input-style w-full p-4 rounded-2xl text-sm">
+            <input type="email" id="vipGmail" placeholder="Your Gmail (for info)" class="input-style w-full p-4 rounded-2xl text-sm">
+            <input type="text" id="vipTrx" placeholder="Transaction ID (TRX)" class="input-style w-full p-4 rounded-2xl text-sm border-yellow-500/20">
+            
+            <button id="doVip" class="w-full py-4 bg-yellow-600 text-black hover:bg-yellow-500 rounded-2xl font-bold text-sm transition">Submit VIP Request</button>
+            <p class="text-[9px] text-gray-600 italic px-4">After payment, we will activate your VIP node within 1 hour.</p>
+        </div>
+
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, set, get, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBJ19zQAzBoqrr-_wS0YRpNeKv4qjDFsVE",
@@ -90,79 +127,77 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // UI TAB SWITCHING
-        const tabL = document.getElementById('tabLogin');
-        const tabR = document.getElementById('tabRegister');
-        const formL = document.getElementById('loginForm');
-        const formR = document.getElementById('registerForm');
+        // Simple Tab Switcher
+        const buttons = [document.getElementById('showLogin'), document.getElementById('showRegister'), document.getElementById('showVip')];
+        const sections = [document.getElementById('loginSection'), document.getElementById('registerSection'), document.getElementById('vipSection')];
 
-        tabL.onclick = () => {
-            tabL.className = "flex-1 py-4 tab-active transition";
-            tabR.className = "flex-1 py-4 text-gray-600 transition";
-            formL.classList.remove('hidden');
-            formR.classList.add('hidden');
-        };
+        buttons.forEach((btn, index) => {
+            btn.onclick = () => {
+                buttons.forEach(b => b.classList.remove('active', 'vip-tab'));
+                sections.forEach(s => s.classList.add('hidden'));
+                
+                btn.classList.add('active');
+                if(index === 2) btn.classList.add('vip-tab');
+                sections[index].classList.remove('hidden');
+            };
+        });
 
-        tabR.onclick = () => {
-            tabR.className = "flex-1 py-4 tab-active transition";
-            tabL.className = "flex-1 py-4 text-gray-600 transition";
-            formR.classList.remove('hidden');
-            formL.classList.add('hidden');
-        };
-
-        // ID PREVIEW LOGIC
-        document.getElementById('regUser').oninput = (e) => {
-            const val = e.target.value.toLowerCase().replace(/\s/g, '');
-            document.getElementById('previewId').innerText = val ? val + "@paradox.pk" : "username@paradox.pk";
-        };
-
-        // --- REGISTRATION LOGIC ---
-        document.getElementById('btnRegister').onclick = async () => {
+        // 1. REGISTER
+        document.getElementById('doRegister').onclick = async () => {
             const name = document.getElementById('regName').value.trim();
             const user = document.getElementById('regUser').value.trim().toLowerCase().replace(/\s/g, '');
             const pass = document.getElementById('regPass').value.trim();
 
-            if(!name || !user || !pass) return alert("Fill all node parameters.");
+            if(!name || !user || !pass) return alert("Please fill all fields.");
 
-            const userRef = ref(db, 'paradox_ecosystem/users/' + user);
-            const snap = await get(userRef);
+            const snap = await get(ref(db, 'paradox_ecosystem/users/' + user));
+            if(snap.exists()) return alert("Username already taken.");
 
-            if(snap.exists()) {
-                alert("Identity Node already registered.");
-            } else {
-                await set(userRef, {
-                    fullName: name,
-                    password: pass,
-                    identity: user + "@paradox.pk",
-                    rank: "Free Member",
-                    timestamp: Date.now()
-                });
-                alert("Node Initialized! Please Login.");
-                tabL.click();
-            }
+            await set(ref(db, 'paradox_ecosystem/users/' + user), {
+                fullName: name,
+                password: pass,
+                identity: user + "@paradox.pk",
+                rank: "Standard",
+                timestamp: Date.now()
+            });
+            alert("Account created! Please login.");
+            buttons[0].click();
         };
 
-        // --- LOGIN LOGIC ---
-        document.getElementById('btnLogin').onclick = async () => {
-            const user = document.getElementById('logUser').value.trim().toLowerCase();
-            const pass = document.getElementById('logPass').value.trim();
+        // 2. LOGIN
+        document.getElementById('doLogin').onclick = async () => {
+            const user = document.getElementById('loginUser').value.trim().toLowerCase();
+            const pass = document.getElementById('loginPass').value.trim();
 
-            if(!user || !pass) return alert("Enter credentials.");
-
-            const userRef = ref(db, 'paradox_ecosystem/users/' + user);
-            const snap = await get(userRef);
-
+            const snap = await get(ref(db, 'paradox_ecosystem/users/' + user));
             if(snap.exists() && snap.val().password === pass) {
-                const data = snap.val();
                 localStorage.setItem('paradox_active_session', JSON.stringify({
                     user: user,
-                    fullName: data.fullName,
-                    identity: data.identity
+                    fullName: snap.val().fullName,
+                    identity: snap.val().identity
                 }));
                 window.location.href = "inbox.html";
             } else {
-                alert("Authentication Failed: Invalid ID or Key.");
+                alert("Wrong username or password.");
             }
+        };
+
+        // 3. VIP REQUEST
+        document.getElementById('doVip').onclick = async () => {
+            const user = document.getElementById('vipUser').value.trim().toLowerCase();
+            const gmail = document.getElementById('vipGmail').value.trim();
+            const trx = document.getElementById('vipTrx').value.trim();
+
+            if(!user || !gmail || !trx) return alert("Please fill all details.");
+
+            await push(ref(db, 'paradox_ecosystem/vip_requests'), {
+                username: user,
+                gmail: gmail,
+                trxID: trx,
+                time: Date.now()
+            });
+            alert("Request sent! Admin will check your payment.");
+            location.reload();
         };
     </script>
 </body>
