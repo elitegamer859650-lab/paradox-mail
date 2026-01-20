@@ -4,38 +4,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inbox | Paradox Mail Secure Relay</title>
+    
+    <meta name="description" content="Secure real-time inbox for Paradox Identity nodes. Decentralized communication fabric.">
     <link rel="icon" type="image/png" href="icon.png">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@300;500;800&display=swap');
-        :root { --bg-dark: #02040a; --accent-blue: #2563eb; --glass: rgba(15, 23, 42, 0.6); }
-        body { background: var(--bg-dark); font-family: 'Plus Jakarta Sans', sans-serif; color: white; overflow-x: hidden; }
+        
+        :root {
+            --bg-dark: #02040a;
+            --accent-blue: #2563eb;
+            --glass: rgba(15, 23, 42, 0.6);
+        }
+
+        body { 
+            background: var(--bg-dark); 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            color: white;
+            overflow-x: hidden;
+        }
+
         .mono { font-family: 'JetBrains Mono', monospace; }
-        .mail-card { background: var(--glass); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.05); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
-        .mail-card:hover { border-color: var(--accent-blue); transform: scale(1.01) translateX(5px); background: rgba(37, 99, 235, 0.05); }
+
+        /* REAL-TIME CARD EFFECTS */
+        .mail-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .mail-card:hover {
+            border-color: var(--accent-blue);
+            transform: translateX(8px);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        /* VIP GLOW UI */
+        .vip-status {
+            background: rgba(234, 179, 8, 0.1);
+            color: #eab308;
+            border: 1px solid rgba(234, 179, 8, 0.2);
+            box-shadow: 0 0 15px rgba(234, 179, 8, 0.1);
+        }
+
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
-        .text-glow { text-shadow: 0 0 20px rgba(37, 99, 235, 0.6); }
     </style>
 </head>
 <body class="flex flex-col h-screen">
 
-    <nav class="p-6 border-b border-white/5 flex justify-between items-center bg-black/40 backdrop-blur-md">
+    <nav class="p-6 border-b border-white/5 flex justify-between items-center bg-black/40 backdrop-blur-md sticky top-0 z-50">
         <div class="flex items-center gap-4">
-            <img src="icon.png" class="w-10 h-10 rounded-xl shadow-lg shadow-blue-500/20">
+            <img src="icon.png" class="w-10 h-10 rounded-xl shadow-lg">
             <div>
                 <h1 class="text-xl font-black uppercase italic tracking-tighter">Paradox <span class="text-blue-500">Mail</span></h1>
-                <p class="text-[9px] mono text-gray-500 tracking-widest uppercase">Relay Node: Active</p>
+                <p class="text-[9px] mono text-gray-500 uppercase">Relay: Online</p>
             </div>
         </div>
+        
         <div class="flex items-center gap-6">
             <div class="hidden md:block text-right">
-                <p id="userName" class="text-xs font-bold text-blue-400 uppercase tracking-widest italic">AUTHENTICATING...</p>
-                <p id="userIdentity" class="text-[9px] mono text-gray-600 tracking-tighter">ID_NODE_SYNCING</p>
+                <p id="userName" class="text-xs font-bold text-white uppercase tracking-tight">...</p>
+                <p id="userIdentity" class="text-[9px] mono text-blue-500">SYNCHRONIZING...</p>
             </div>
-            <a href="send-mail.html" class="bg-blue-600 hover:bg-blue-500 px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest transition flex items-center gap-2 shadow-lg shadow-blue-600/20">
+            <a href="send-mail.html" class="bg-blue-600 hover:bg-blue-500 px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition flex items-center gap-2">
                 <i class="fas fa-paper-plane"></i> <span class="hidden sm:inline">Compose</span>
             </a>
             <button onclick="logout()" class="text-gray-500 hover:text-red-500 transition"><i class="fas fa-power-off"></i></button>
@@ -43,53 +80,56 @@
     </nav>
 
     <main class="flex flex-1 overflow-hidden">
+        
         <aside class="w-20 md:w-64 border-r border-white/5 p-4 flex flex-col gap-4 bg-black/20">
-            <button onclick="location.reload()" class="flex items-center gap-4 p-4 rounded-2xl bg-blue-600/10 text-blue-500 border border-blue-500/20">
-                <i class="fas fa-inbox"></i> <span class="hidden md:block font-bold text-sm uppercase italic">Inbox</span>
+            <button class="flex items-center gap-4 p-4 rounded-2xl bg-blue-600/10 text-blue-500 border border-blue-500/20">
+                <i class="fas fa-inbox"></i> <span class="hidden md:block font-bold text-xs uppercase italic">Inbox</span>
             </button>
-            <button onclick="window.location.href='sent-mail.html'" class="flex items-center gap-4 p-4 rounded-2xl text-gray-500 hover:bg-white/5 transition text-left">
-                <i class="fas fa-share-square"></i> <span class="hidden md:block font-bold text-sm uppercase italic">Sent Packets</span>
+            <button onclick="window.location.href='send-mail.html'" class="flex items-center gap-4 p-4 rounded-2xl text-gray-500 hover:bg-white/5 transition">
+                <i class="fas fa-share-square"></i> <span class="hidden md:block font-bold text-xs uppercase italic">Sent Log</span>
             </button>
+            
             <div class="mt-auto p-4 rounded-2xl bg-white/5 border border-white/5 hidden md:block">
-                <p class="text-[10px] mono text-gray-600 mb-2 uppercase tracking-widest italic">Storage Status</p>
-                <div class="h-1 bg-gray-900 rounded-full overflow-hidden">
-                    <div class="bg-blue-600 h-full w-[12%] shadow-[0_0_5px_#2563eb]"></div>
+                <p class="text-[9px] mono text-gray-600 mb-2 uppercase font-bold">Node Privilege</p>
+                <div id="rankDisplay" class="text-[10px] font-black uppercase italic p-2 rounded-lg bg-blue-500/5 text-blue-500 border border-blue-500/10 text-center">
+                    LOADING...
                 </div>
             </div>
         </aside>
 
-        <section class="flex-1 p-6 overflow-y-auto relative bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]">
-            <div class="flex justify-between items-end mb-10">
-                <h2 class="text-4xl font-black uppercase italic tracking-tighter">Your <br><span class="text-blue-500 text-glow">Transmission</span> Log</h2>
-                <div class="text-right mono text-[10px] text-gray-600 uppercase">
-                    SECURE_PROTOCOL: AES-256 <br>
-                    LAST_SYNC: <span id="lastSync">...</span>
+        <section class="flex-1 p-6 md:p-10 overflow-y-auto relative bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]">
+            
+            <div class="flex justify-between items-end mb-12">
+                <div>
+                    <h2 class="text-4xl font-black uppercase italic tracking-tighter">Transmission <span class="text-blue-500">Log</span></h2>
+                    <p class="text-gray-600 text-[10px] mono uppercase mt-2">Decentralized Data Packets</p>
+                </div>
+                <div class="text-right mono text-[10px] text-gray-700">
+                    LAST_SYNC: <span id="lastSync" class="text-blue-900">--:--:--</span>
                 </div>
             </div>
 
             <div id="mailContainer" class="space-y-4">
-                <div id="loader" class="animate-pulse space-y-4">
+                <div class="animate-pulse space-y-4" id="loader">
                     <div class="h-24 bg-white/5 rounded-3xl"></div>
                     <div class="h-24 bg-white/5 rounded-3xl"></div>
                 </div>
             </div>
 
-            <div id="emptyInbox" class="hidden absolute inset-0 flex flex-col items-center justify-center text-center p-10 pointer-events-none">
+            <div id="emptyInbox" class="hidden absolute inset-0 flex flex-col items-center justify-center text-center p-10">
                 <i class="fas fa-satellite-dish text-6xl text-gray-800 mb-6"></i>
-                <h3 class="text-xl font-bold text-gray-600 italic uppercase">No Transmissions</h3>
-                <p class="text-xs text-gray-700 mono mt-2 italic">Listening for data packets on your identity node...</p>
+                <h3 class="text-xl font-bold text-gray-600 uppercase italic">No Transmissions</h3>
+                <p class="text-[10px] text-gray-700 mono mt-2 italic">Monitoring Paradox Cloud for incoming packets...</p>
             </div>
+
         </section>
     </main>
-
-    <footer class="p-4 border-t border-white/5 text-center bg-black/40">
-        <p class="text-[9px] mono text-gray-700 tracking-[0.4em] uppercase">Paradox Distributed Mail Architecture v2.0</p>
-    </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
+        // FIREBASE CONFIG
         const firebaseConfig = {
             apiKey: "AIzaSyBJ19zQAzBoqrr-_wS0YRpNeKv4qjDFsVE",
             authDomain: "paradox-mail-official.firebaseapp.com",
@@ -103,73 +143,88 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
+        // SESSION SECURITY
         const session = localStorage.getItem('paradox_active_session');
         if(!session) { window.location.href = "auth-gateway.html"; }
         const userData = JSON.parse(session);
-        
-        document.getElementById('userName').innerText = (userData.user || "NODE_USER").toUpperCase();
-        document.getElementById('userIdentity').innerText = userData.identity || "PRDX-CORE-UNVERIFIED";
 
+        // 1. LIVE USER SYNC (Rank & ID update instantly from Cloud)
+        onValue(ref(db, 'paradox_ecosystem/users/' + userData.user), (snapshot) => {
+            if(snapshot.exists()){
+                const live = snapshot.val();
+                document.getElementById('userName').innerText = live.fullName;
+                document.getElementById('userIdentity').innerText = live.identity;
+                
+                const rankBox = document.getElementById('rankDisplay');
+                rankBox.innerText = live.rank || "Free Member";
+                if(live.rank === "VIP") {
+                    rankBox.classList.add('vip-status');
+                    rankBox.classList.remove('text-blue-500');
+                } else {
+                    rankBox.classList.remove('vip-status');
+                    rankBox.classList.add('text-blue-500');
+                }
+            }
+        });
+
+        // 2. LIVE MAIL LISTENER
         const mailRef = ref(db, 'paradox_ecosystem/mails/' + userData.user);
-        
         onValue(mailRef, (snapshot) => {
-            const mailContainer = document.getElementById('mailContainer');
-            const emptyInbox = document.getElementById('emptyInbox');
-            mailContainer.innerHTML = "";
+            const container = document.getElementById('mailContainer');
+            const empty = document.getElementById('emptyInbox');
+            const loader = document.getElementById('loader');
+            
+            if(loader) loader.remove();
+            container.innerHTML = "";
             
             if (!snapshot.exists()) {
-                emptyInbox.classList.remove('hidden');
+                empty.classList.remove('hidden');
                 return;
             }
 
-            emptyInbox.classList.add('hidden');
+            empty.classList.add('hidden');
             const mails = snapshot.val();
             const mailList = Object.keys(mails).map(key => ({id: key, ...mails[key]})).reverse();
 
             mailList.forEach(mail => {
                 const date = new Date(mail.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                
-                // --- DYNAMIC IDENTITY LOGIC ---
-                // Agar sender VIP hai toh username.pk, warna username@paradox.pk
-                const extension = (mail.senderRank === 'VIP' || mail.senderRank === 'Official') ? '.pk' : '@paradox.pk';
-                const senderDisplay = `${mail.senderID}${extension}`;
+                const isVipMail = mail.senderID === "OFFICIAL" || mail.senderID === "SYSTEM_CORE";
 
-                const mailDiv = document.createElement('div');
-                mailDiv.className = "mail-card p-6 rounded-3xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden group mb-4";
+                const card = document.createElement('div');
+                card.className = "mail-card p-6 rounded-3xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden group";
                 
-                mailDiv.innerHTML = `
+                card.innerHTML = `
                     ${mail.isNew ? '<div class="absolute top-0 left-0 w-1 h-full bg-blue-500 shadow-[0_0_10px_#2563eb]"></div>' : ''}
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-2xl bg-blue-600/10 flex items-center justify-center text-blue-500 border border-blue-500/10">
-                            <i class="fas fa-user-secret"></i>
+                        <div class="w-12 h-12 rounded-2xl bg-blue-600/10 flex items-center justify-center ${isVipMail ? 'text-yellow-500' : 'text-blue-500'} border border-white/5">
+                            <i class="fas ${isVipMail ? 'fa-crown' : 'fa-envelope-open-text'}"></i>
                         </div>
                         <div>
-                            <h4 class="font-bold text-sm tracking-tight text-white group-hover:text-blue-400 transition italic">
-                                ${mail.senderName || 'Anonymous'} 
-                                <span class="text-[10px] text-blue-500 mono ml-2 lowercase tracking-tighter">
-                                    ${senderDisplay}
-                                </span>
+                            <h4 class="font-bold text-sm text-white group-hover:text-blue-400 transition flex items-center gap-2">
+                                ${mail.senderName} 
+                                <span class="text-[9px] text-gray-600 mono font-normal italic">@${mail.senderID}</span>
                             </h4>
-                            <p class="text-xs text-gray-400 font-medium italic mt-1 tracking-tight">${mail.subject || '(No Transmission Header)'}</p>
+                            <p class="text-xs text-gray-400 italic mt-1">${mail.subject}</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-6 w-full md:w-auto justify-between md:justify-end">
-                        <p class="text-[10px] mono text-gray-600 uppercase italic">${date}</p>
-                        <button class="p-3 bg-white/5 rounded-xl border border-white/5 group-hover:border-blue-500/30 group-hover:text-blue-500 transition">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
+                        <p class="text-[9px] mono text-gray-600 uppercase font-bold italic">${date}</p>
+                        <i class="fas fa-chevron-right text-gray-800 group-hover:text-blue-500 group-hover:translate-x-1 transition"></i>
                     </div>
                 `;
 
-                mailDiv.onclick = () => {
+                // CLOUD-BASED REDIRECTION
+                card.onclick = () => {
                     if(mail.isNew) {
                         update(ref(db, `paradox_ecosystem/mails/${userData.user}/${mail.id}`), { isNew: false });
                     }
                     window.location.href = `view-mail.html?id=${mail.id}`;
                 };
-                mailContainer.appendChild(mailDiv);
+
+                container.appendChild(card);
             });
-            document.getElementById('lastSync').innerText = new Date().toLocaleTimeString();
+
+            document.getElementById('lastSync').innerText = new Date().toLocaleTimeString('en-GB');
         });
 
         window.logout = () => {
