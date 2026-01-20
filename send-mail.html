@@ -3,87 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transmit | Paradox Secure Mail Relay</title>
-    
+    <title>Transmit | Paradox Secure Relay</title>
     <link rel="icon" type="image/png" href="icon.png">
-
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;800&family=JetBrains+Mono:wght@400;700&display=swap');
-        :root { --bg-deep: #020617; --accent-blue: #2563eb; --glass-border: rgba(255, 255, 255, 0.08); }
-        body { background: var(--bg-deep); font-family: 'Plus Jakarta Sans', sans-serif; color: white; overflow-x: hidden; }
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@300;500;800&display=swap');
+        body { background: #02040a; font-family: 'Plus Jakarta Sans', sans-serif; color: white; overflow: hidden; }
         .mono { font-family: 'JetBrains Mono', monospace; }
-        .terminal-panel { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(25px); border: 1px solid var(--glass-border); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
-        .input-glow { background: rgba(2, 6, 23, 0.6); border: 1px solid var(--glass-border); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .input-glow:focus { border-color: var(--accent-blue); box-shadow: 0 0 20px rgba(37, 99, 235, 0.15); outline: none; }
-        ::selection { background: var(--accent-blue); color: white; }
+        .glass-panel { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .input-box { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); transition: 0.3s; }
+        .input-box:focus { border-color: #2563eb; outline: none; box-shadow: 0 0 20px rgba(37, 99, 235, 0.1); }
+        
+        /* Loading Overlay */
+        #overlay { background: rgba(2, 4, 10, 0.95); display: none; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="h-screen flex flex-col">
 
-    <nav class="p-6 border-b border-white/5 flex justify-between items-center bg-black/40 backdrop-blur-xl sticky top-0 z-50">
+    <nav class="p-6 border-b border-white/5 flex justify-between items-center bg-black/20">
         <div class="flex items-center gap-4">
-            <img src="icon.png" class="w-10 h-10 rounded-xl shadow-[0_0_15px_rgba(37,99,235,0.3)]">
-            <div>
-                <h1 class="text-xl font-black uppercase italic tracking-tighter">Paradox <span class="text-blue-500">Transmitter</span></h1>
-                <p class="text-[9px] mono text-gray-500 tracking-[0.3em]">SECURE_RELAY_V2</p>
-            </div>
+            <img src="icon.png" class="w-10 h-10 rounded-xl">
+            <h1 class="text-xl font-black uppercase italic tracking-tighter">Paradox <span class="text-blue-500">Transmit</span></h1>
         </div>
-        <div class="flex items-center gap-4">
-            <a href="inbox.html" class="text-gray-400 hover:text-white transition mono text-[10px] uppercase tracking-widest px-4 py-2 rounded-full bg-white/5 border border-white/5">
-                <i class="fas fa-arrow-left mr-2"></i> Cancel
-            </a>
-        </div>
+        <button onclick="window.location.href='inbox.html'" class="text-gray-500 hover:text-white transition mono text-[10px] uppercase tracking-widest">
+            <i class="fas fa-times mr-2"></i> Close_Terminal
+        </button>
     </nav>
 
-    <main class="flex-1 flex items-center justify-center p-6 relative overflow-hidden">
-        <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/5 blur-[120px] -z-10"></div>
-
-        <div id="mainComposer" class="terminal-panel w-full max-w-3xl p-8 md:p-12 rounded-[3rem] relative z-10">
-            <div class="mb-10 space-y-2 text-center md:text-left">
-                <h2 class="text-3xl font-black uppercase italic tracking-tighter">Initialize <span class="text-blue-500">Packet</span></h2>
-                <p class="text-gray-500 text-xs mono uppercase tracking-widest italic">Source Node: <span id="senderDisplay" class="text-blue-400">AUTHENTICATING...</span></p>
+    <main class="flex-1 flex items-center justify-center p-6 relative">
+        <div class="glass-panel w-full max-w-2xl p-10 rounded-[3rem] space-y-8 relative z-10">
+            <div class="space-y-2">
+                <h2 class="text-3xl font-black uppercase italic tracking-tighter">New <span class="text-blue-500">Transmission</span></h2>
+                <p class="text-[10px] mono text-gray-600 uppercase">Authenticated As: <span id="myId" class="text-blue-900">...</span></p>
             </div>
 
-            <div class="space-y-8">
-                <div class="relative">
-                    <label class="block text-[10px] uppercase font-black text-gray-500 tracking-[0.3em] mb-3 ml-1 italic">Target Identity (@paradox.pk)</label>
-                    <div class="relative group">
-                        <i class="fas fa-satellite absolute top-5 left-5 text-blue-500 opacity-50"></i>
-                        <input type="text" id="targetId" placeholder="Recipient username" class="input-glow w-full p-5 pl-14 rounded-2xl text-white font-bold">
-                    </div>
+            <div class="space-y-6">
+                <div>
+                    <label class="block text-[9px] mono text-gray-500 uppercase mb-2 ml-1">Recipient Identity (@paradox.pk)</label>
+                    <input type="text" id="target" placeholder="Username (e.g. hammad)" class="input-box w-full p-4 rounded-2xl text-sm font-bold">
+                </div>
+                <div>
+                    <label class="block text-[9px] mono text-gray-500 uppercase mb-2 ml-1">Packet Header (Subject)</label>
+                    <input type="text" id="subject" placeholder="Subject line" class="input-box w-full p-4 rounded-2xl text-sm italic">
+                </div>
+                <div>
+                    <label class="block text-[9px] mono text-gray-500 uppercase mb-2 ml-1">Data Payload (Message)</label>
+                    <textarea id="message" rows="5" placeholder="Enter encrypted message..." class="input-box w-full p-5 rounded-[2rem] text-sm resize-none"></textarea>
                 </div>
 
-                <div class="relative">
-                    <label class="block text-[10px] uppercase font-black text-gray-500 tracking-[0.3em] mb-3 ml-1 italic">Transmission Subject</label>
-                    <input type="text" id="subject" placeholder="Packet header" class="input-glow w-full p-5 rounded-2xl text-white">
-                </div>
-
-                <div class="relative">
-                    <label class="block text-[10px] uppercase font-black text-gray-500 tracking-[0.3em] mb-3 ml-1 italic">Message Payload</label>
-                    <textarea id="payload" rows="6" placeholder="Write your data transmission here..." class="input-glow w-full p-6 rounded-[2rem] text-white resize-none"></textarea>
-                </div>
-
-                <button id="transmitBtn" class="w-full py-6 bg-blue-600 rounded-[2rem] font-black uppercase tracking-[0.4em] text-sm shadow-xl shadow-blue-600/20 hover:scale-[1.02] active:scale-95 transition-all">
-                    Execute Transmission
+                <button id="sendBtn" class="w-full py-5 bg-blue-600 rounded-[2rem] font-black uppercase tracking-widest text-[11px] shadow-xl shadow-blue-500/30 hover:bg-blue-500 hover:scale-[1.01] transition-all">
+                    Execute Dispatch
                 </button>
             </div>
+        </div>
 
-            <div id="transmissionLoader" class="hidden absolute inset-0 bg-[#020617]/95 z-50 rounded-[3rem] flex flex-col items-center justify-center space-y-6">
-                <div class="w-20 h-20 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                <div class="text-center space-y-2">
-                    <h4 class="text-blue-500 font-black tracking-widest uppercase italic">Launching Packet...</h4>
-                    <p id="logText" class="mono text-[10px] text-gray-600 uppercase italic">Encrypting data stream...</p>
-                </div>
-            </div>
+        <div id="overlay" class="fixed inset-0 z-50 flex flex-col items-center justify-center">
+            <div class="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-6"></div>
+            <p id="statusLog" class="mono text-[10px] text-blue-500 uppercase tracking-widest">Encrypting_Packets...</p>
         </div>
     </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, push, set, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, set, push, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBJ19zQAzBoqrr-_wS0YRpNeKv4qjDFsVE",
@@ -98,61 +83,60 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        const session = localStorage.getItem('paradox_active_session');
+        const session = JSON.parse(localStorage.getItem('paradox_active_session'));
         if(!session) window.location.href = "auth-gateway.html";
-        const currentUser = JSON.parse(session);
-        document.getElementById('senderDisplay').innerText = currentUser.identity || "PRDX-NODE-01";
+        document.getElementById('myId').innerText = session.identity;
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const replyTo = urlParams.get('replyTo');
-        if(replyTo) {
-            document.getElementById('targetId').value = replyTo;
-            document.getElementById('subject').value = "RE: Transmission Log";
-        }
-
-        document.getElementById('transmitBtn').onclick = async () => {
-            const rawTarget = document.getElementById('targetId').value.trim().toLowerCase();
-            const target = rawTarget.split('@')[0];
+        document.getElementById('sendBtn').onclick = async () => {
+            const targetId = document.getElementById('target').value.trim().toLowerCase();
             const sub = document.getElementById('subject').value.trim();
-            const msg = document.getElementById('payload').value.trim();
+            const msg = document.getElementById('message').value.trim();
+            const log = document.getElementById('statusLog');
+            const overlay = document.getElementById('overlay');
 
-            if(!target || !sub || !msg) return alert("System Error: Payload incomplete.");
+            if(!targetId || !sub || !msg) return alert("System_Error: Payload_Incomplete");
 
-            const loader = document.getElementById('transmissionLoader');
-            const logText = document.getElementById('logText');
-            loader.classList.remove('hidden');
-
+            overlay.style.display = "flex";
+            
             try {
-                logText.innerText = "> VERIFYING_TARGET_NODE...";
-                const targetRef = ref(db, 'paradox_ecosystem/users/' + target);
-                const targetSnap = await get(targetRef);
-
-                if(!targetSnap.exists()) {
-                    alert("ERROR: Target Identity not found in Paradox fabric.");
-                    loader.classList.add('hidden');
+                // 1. RECIPIENT VERIFICATION
+                log.innerText = "CHECKING_TARGET_NODE...";
+                const userSnap = await get(ref(db, 'paradox_ecosystem/users/' + targetId));
+                
+                if(!userSnap.exists()) {
+                    overlay.style.display = "none";
+                    alert("ERROR: Identity not found on Paradox Network.");
                     return;
                 }
 
-                logText.innerText = "> ENCRYPTING_HANDSHAKE...";
-                const newMailRef = ref(db, 'paradox_ecosystem/mails/' + target);
-                const newMailKey = push(newMailRef);
-                
-                await set(newMailKey, {
-                    senderID: currentUser.user,
-                    senderName: currentUser.fullName || currentUser.user,
-                    senderRank: currentUser.rank || 'Member', // FIXED: Rank data added
+                log.innerText = "ESTABLISHING_SECURE_RELAY...";
+                const timestamp = Date.now();
+
+                // 2. DISPATCH TO RECIPIENT
+                await push(ref(db, 'paradox_ecosystem/mails/' + targetId), {
+                    senderID: session.user,
+                    senderName: session.fullName,
                     subject: sub,
                     body: msg,
-                    timestamp: Date.now(),
+                    timestamp: timestamp,
                     isNew: true
                 });
 
-                logText.innerText = "> PACKET_DISPATCHED_SUCCESSFULLY";
-                setTimeout(() => { window.location.href = "inbox.html"; }, 1200);
+                // 3. ARCHIVE TO SENDER'S SENT FOLDER (Real-time Cloud Sync)
+                log.innerText = "ARCHIVING_TRANSMISSION...";
+                await push(ref(db, 'paradox_ecosystem/sent_archive/' + session.user), {
+                    recipientID: targetId,
+                    subject: sub,
+                    body: msg,
+                    timestamp: timestamp
+                });
 
-            } catch (err) {
-                alert("CRITICAL_FAILURE: Connection lost.");
-                loader.classList.add('hidden');
+                log.innerText = "TRANSMISSION_COMPLETE";
+                setTimeout(() => { window.location.href = "inbox.html"; }, 1000);
+
+            } catch(e) {
+                overlay.style.display = "none";
+                alert("CRITICAL_RELAY_FAILURE");
             }
         };
     </script>
