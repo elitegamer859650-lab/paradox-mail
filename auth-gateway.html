@@ -185,15 +185,19 @@
             document.getElementById('loading').classList.remove('hidden');
             const snap = await get(ref(db, 'paradox_ecosystem/users/' + u));
 
-            if(snap.exists() && snap.val().password === p) {
-                localStorage.setItem('paradox_session', btoa(u));
-                window.location.href = "index.html";
-            } else {
-                alert("ACCESS_DENIED: Identity Mismatch.");
-                document.getElementById('loading').classList.add('hidden');
-            }
-        };
-
+          // SIGN IN LOGIC UPDATE
+if(snap.exists() && snap.val().password === pass) {
+    // 1. Session save karo
+    localStorage.setItem('paradox_active_session', JSON.stringify({
+        user: user,
+        identity: snap.val().identity,
+        fullName: snap.val().fullName,
+        rank: snap.val().rank // VIP check ke liye
+    }));
+    
+    // 2. Redirect to INBOX (Asli kaam yahan hai)
+    window.location.href = "inbox.html"; 
+}
         // --- DISABLE INSPECT ELEMENT (LEVEL 2 SECURITY) ---
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.onkeydown = (e) => {
