@@ -12,41 +12,12 @@
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;800&family=JetBrains+Mono:wght@400;700&display=swap');
-        
-        :root {
-            --bg-deep: #020617;
-            --accent-blue: #2563eb;
-            --glass-border: rgba(255, 255, 255, 0.08);
-        }
-
-        body { 
-            background: var(--bg-deep); 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            color: white;
-            overflow-x: hidden;
-        }
-
+        :root { --bg-deep: #020617; --accent-blue: #2563eb; --glass-border: rgba(255, 255, 255, 0.08); }
+        body { background: var(--bg-deep); font-family: 'Plus Jakarta Sans', sans-serif; color: white; overflow-x: hidden; }
         .mono { font-family: 'JetBrains Mono', monospace; }
-
-        .terminal-panel {
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(25px);
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
-
-        .input-glow {
-            background: rgba(2, 6, 23, 0.6);
-            border: 1px solid var(--glass-border);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .input-glow:focus {
-            border-color: var(--accent-blue);
-            box-shadow: 0 0 20px rgba(37, 99, 235, 0.15);
-            outline: none;
-        }
-
+        .terminal-panel { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(25px); border: 1px solid var(--glass-border); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+        .input-glow { background: rgba(2, 6, 23, 0.6); border: 1px solid var(--glass-border); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .input-glow:focus { border-color: var(--accent-blue); box-shadow: 0 0 20px rgba(37, 99, 235, 0.15); outline: none; }
         ::selection { background: var(--accent-blue); color: white; }
     </style>
 </head>
@@ -68,11 +39,9 @@
     </nav>
 
     <main class="flex-1 flex items-center justify-center p-6 relative overflow-hidden">
-        
         <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/5 blur-[120px] -z-10"></div>
 
         <div id="mainComposer" class="terminal-panel w-full max-w-3xl p-8 md:p-12 rounded-[3rem] relative z-10">
-            
             <div class="mb-10 space-y-2 text-center md:text-left">
                 <h2 class="text-3xl font-black uppercase italic tracking-tighter">Initialize <span class="text-blue-500">Packet</span></h2>
                 <p class="text-gray-500 text-xs mono uppercase tracking-widest italic">Source Node: <span id="senderDisplay" class="text-blue-400">AUTHENTICATING...</span></p>
@@ -129,13 +98,11 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // SESSION & IDENTITY SYNC
         const session = localStorage.getItem('paradox_active_session');
         if(!session) window.location.href = "auth-gateway.html";
         const currentUser = JSON.parse(session);
         document.getElementById('senderDisplay').innerText = currentUser.identity || "PRDX-NODE-01";
 
-        // HANDLE REPLY AUTO-FILL
         const urlParams = new URLSearchParams(window.location.search);
         const replyTo = urlParams.get('replyTo');
         if(replyTo) {
@@ -143,7 +110,6 @@
             document.getElementById('subject').value = "RE: Transmission Log";
         }
 
-        // TRANSMISSION ENGINE
         document.getElementById('transmitBtn').onclick = async () => {
             const rawTarget = document.getElementById('targetId').value.trim().toLowerCase();
             const target = rawTarget.split('@')[0];
@@ -157,7 +123,6 @@
             loader.classList.remove('hidden');
 
             try {
-                // 1. VERIFY TARGET
                 logText.innerText = "> VERIFYING_TARGET_NODE...";
                 const targetRef = ref(db, 'paradox_ecosystem/users/' + target);
                 const targetSnap = await get(targetRef);
@@ -168,7 +133,6 @@
                     return;
                 }
 
-                // 2. DISPATCH PACKET
                 logText.innerText = "> ENCRYPTING_HANDSHAKE...";
                 const newMailRef = ref(db, 'paradox_ecosystem/mails/' + target);
                 const newMailKey = push(newMailRef);
@@ -176,6 +140,7 @@
                 await set(newMailKey, {
                     senderID: currentUser.user,
                     senderName: currentUser.fullName || currentUser.user,
+                    senderRank: currentUser.rank || 'Member', // FIXED: Rank data added
                     subject: sub,
                     body: msg,
                     timestamp: Date.now(),
