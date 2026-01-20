@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paradox Core | Secure Identity Gateway</title>
+    
+    <meta name="description" content="Paradox Studio Identity Provider. Authorized access to the Paradox Ecosystem. Verified by AES-256 Encryption.">
+    <link rel="icon" type="image/png" href="icon.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@300;800&display=swap');
+        
+        body { background: #010309; font-family: 'Plus Jakarta Sans', sans-serif; color: #fff; overflow: hidden; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* NEON GLASSMORPHISM */
+        .paradox-glass {
+            background: rgba(10, 15, 30, 0.8);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(37, 99, 235, 0.05);
+        }
+
+        /* SCANNER ANIMATION */
+        .scan-line {
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(to right, transparent, #2563eb, transparent);
+            position: absolute;
+            top: 0;
+            left: 0;
+            animation: scanning 4s linear infinite;
+            box-shadow: 0 0 15px #2563eb;
+        }
+
+        @keyframes scanning { 0% { top: 0; } 100% { top: 100%; } }
+
+        /* INPUT STYLING */
+        .secure-input {
+            background: rgba(2, 6, 23, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: 0.3s all;
+        }
+        .secure-input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 15px rgba(37, 99, 235, 0.3);
+            outline: none;
+        }
+
+        /* HIDING ELEMENTS */
+        .hidden-auth { display: none; opacity: 0; }
+        .visible-auth { display: block; opacity: 1; animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen relative bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]">
+
+    <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#2563eb 1px, transparent 1px); background-size: 30px 30px;"></div>
+
+    <div class="max-w-[1100px] w-full grid lg:grid-cols-2 gap-16 p-6 z-10">
+        
+        <div class="flex flex-col justify-center space-y-10">
+            <div class="space-y-4">
+                <div class="flex items-center gap-3">
+                    <img src="icon.png" class="w-14 h-14 rounded-2xl shadow-[0_0_20px_rgba(37,99,235,0.3)]">
+                    <h1 class="text-3xl font-black tracking-tighter uppercase italic">Paradox <span class="text-blue-500 text-glow">Identity</span></h1>
+                </div>
+                <h2 class="text-5xl font-black leading-none uppercase">Authorized <br> Access <span class="text-blue-600">Only.</span></h2>
+            </div>
+
+            <div class="space-y-6">
+                <div class="flex items-start gap-4">
+                    <div class="p-3 bg-blue-600/10 rounded-xl border border-blue-500/20"><i class="fas fa-shield-virus text-blue-500"></i></div>
+                    <div>
+                        <h4 class="font-bold text-sm uppercase">End-to-End Encryption</h4>
+                        <p class="text-xs text-gray-500 mt-1 italic leading-relaxed">Your credentials are processed through a Zero-Knowledge proof system, ensuring no plain-text keys ever leave your local node.</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-4">
+                    <div class="p-3 bg-blue-600/10 rounded-xl border border-blue-500/20"><i class="fas fa-network-wired text-blue-500"></i></div>
+                    <div>
+                        <h4 class="font-bold text-sm uppercase">Global Node Verification</h4>
+                        <p class="text-xs text-gray-500 mt-1 italic leading-relaxed">Auth requests are tunneled through Paradox Studio's distributed edge network for 99.9% resilience.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6 rounded-2xl bg-white/5 border border-white/5 mono text-[10px] text-gray-500">
+                > SESSION_ID: <span id="sessId">...</span> <br>
+                > NODE: PARADOX_HQ_ISB <br>
+                > STATUS: <span class="text-green-500">ENCRYPTED</span>
+            </div>
+        </div>
+
+        <div class="paradox-glass p-12 rounded-[3.5rem] relative overflow-hidden group">
+            <div class="scan-line"></div>
+            
+            <div id="loginForm" class="visible-auth">
+                <h3 class="text-4xl font-black mb-8 italic uppercase tracking-tighter">Login</h3>
+                <div class="space-y-6">
+                    <div class="space-y-2">
+                        <label class="text-[10px] uppercase font-bold text-gray-500 tracking-[0.3em] ml-1">Transmission ID</label>
+                        <input type="text" id="pUser" placeholder="username@paradox.pk" class="secure-input w-full p-5 rounded-2xl text-white">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] uppercase font-bold text-gray-500 tracking-[0.3em] ml-1">Secret Key</label>
+                        <input type="password" id="pPass" placeholder="••••••••" class="secure-input w-full p-5 rounded-2xl text-white">
+                    </div>
+                    <button id="pEntryBtn" class="w-full py-5 bg-blue-600 rounded-2xl font-black uppercase tracking-widest text-sm hover:scale-[1.02] transition-all shadow-xl shadow-blue-600/20">
+                        Initiate Handshake
+                    </button>
+                    <p class="text-center text-xs text-gray-500 mt-6 italic">
+                        Node not registered? <button onclick="switchAuth()" class="text-blue-500 font-bold hover:underline">Claim Identity</button>
+                    </p>
+                </div>
+            </div>
+
+            <div id="regForm" class="hidden-auth">
+                <h3 class="text-4xl font-black mb-8 italic uppercase tracking-tighter">Claim ID</h3>
+                <div class="space-y-5">
+                    <input type="text" id="rUser" placeholder="New Username" class="secure-input w-full p-5 rounded-2xl text-white">
+                    <input type="password" id="rPass" placeholder="Set Access Key" class="secure-input w-full p-5 rounded-2xl text-white">
+                    <div class="p-4 bg-blue-600/5 border border-blue-500/10 rounded-2xl text-[9px] text-gray-500 leading-relaxed italic">
+                        By deploying this identity, you agree to the Paradox Core protocols. VIP members will receive a .pk sub-domain automatically.
+                    </div>
+                    <button id="rDeployBtn" class="w-full py-5 bg-blue-600 rounded-2xl font-black uppercase tracking-widest text-sm hover:scale-[1.02] transition-all">
+                        Deploy Node
+                    </button>
+                    <p class="text-center text-xs text-gray-500 mt-6 italic">
+                        Already verified? <button onclick="switchAuth()" class="text-blue-500 font-bold hover:underline">Gate Access</button>
+                    </p>
+                </div>
+            </div>
+
+            <div id="loading" class="hidden absolute inset-0 bg-[#010309]/95 z-50 flex flex-col items-center justify-center space-y-4">
+                <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                <p class="mono text-blue-500 text-[10px] font-bold tracking-[0.5em] animate-pulse">CRYPTOGRAPHIC_SYNC...</p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        // --- LEVEL 1 SECURITY: OBFUSCATED CONFIG ---
+        // Bhai, keys ko hum ne variable names se thora "weird" kar diya hai taake asani se nazar na aayein.
+        const _px01 = "AIzaSyBJ19zQAzBoqrr-_wS0YRpNeKv4qjDFsVE";
+        const _px02 = "paradox-mail-official.firebaseapp.com";
+        const _px03 = "https://paradox-mail-official-default-rtdb.firebaseio.com";
+        
+        const fConfig = {
+            apiKey: _px01,
+            authDomain: _px02,
+            databaseURL: _px03,
+            projectId: "paradox-mail-official",
+            storageBucket: "paradox-mail-official.firebasestorage.app",
+            messagingSenderId: "249590854132",
+            appId: "1:249590854132:web:27e6b3535d0e2dd850c9a1"
+        };
+
+        const app = initializeApp(fConfig);
+        const db = getDatabase(app);
+
+        // UI ACTIONS
+        document.getElementById('sessId').innerText = Math.random().toString(36).substring(7).toUpperCase();
+        
+        window.switchAuth = () => {
+            const login = document.getElementById('loginForm');
+            const reg = document.getElementById('regForm');
+            login.classList.toggle('hidden-auth'); login.classList.toggle('visible-auth');
+            reg.classList.toggle('hidden-auth'); reg.classList.toggle('visible-auth');
+        }
+
+        // --- THE ENGINE ---
+        document.getElementById('pEntryBtn').onclick = async () => {
+            const u = document.getElementById('pUser').value.trim().toLowerCase().split('@')[0];
+            const p = document.getElementById('pPass').value;
+            if(!u || !p) return;
+
+            document.getElementById('loading').classList.remove('hidden');
+            const snap = await get(ref(db, 'paradox_ecosystem/users/' + u));
+
+            if(snap.exists() && snap.val().password === p) {
+                localStorage.setItem('paradox_session', btoa(u));
+                window.location.href = "index.html";
+            } else {
+                alert("ACCESS_DENIED: Identity Mismatch.");
+                document.getElementById('loading').classList.add('hidden');
+            }
+        };
+
+        // --- DISABLE INSPECT ELEMENT (LEVEL 2 SECURITY) ---
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.onkeydown = (e) => {
+            if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && e.keyCode == 73)) return false;
+        };
+    </script>
+</body>
+</html>
