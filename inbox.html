@@ -51,14 +51,14 @@
                 <i class="fas fa-share-square"></i> <span class="hidden md:block font-bold text-sm uppercase italic">Sent Packets</span>
             </button>
             <div class="mt-auto p-4 rounded-2xl bg-white/5 border border-white/5 hidden md:block">
-                <p class="text-[10px] mono text-gray-600 mb-2 uppercase tracking-widest italic">Node Status</p>
+                <p class="text-[10px] mono text-gray-600 mb-2 uppercase tracking-widest italic">Storage Status</p>
                 <div class="h-1 bg-gray-900 rounded-full overflow-hidden">
-                    <div class="bg-blue-600 h-full w-[25%] shadow-[0_0_5px_#2563eb]"></div>
+                    <div class="bg-blue-600 h-full w-[12%] shadow-[0_0_5px_#2563eb]"></div>
                 </div>
             </div>
         </aside>
 
-        <section class="flex-1 p-6 overflow-y-auto relative">
+        <section class="flex-1 p-6 overflow-y-auto relative bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]">
             <div class="flex justify-between items-end mb-10">
                 <h2 class="text-4xl font-black uppercase italic tracking-tighter">Your <br><span class="text-blue-500 text-glow">Transmission</span> Log</h2>
                 <div class="text-right mono text-[10px] text-gray-600 uppercase">
@@ -69,15 +69,15 @@
 
             <div id="mailContainer" class="space-y-4">
                 <div id="loader" class="animate-pulse space-y-4">
-                    <div class="h-24 bg-white/5 rounded-3xl border border-white/5"></div>
-                    <div class="h-24 bg-white/5 rounded-3xl border border-white/5"></div>
+                    <div class="h-24 bg-white/5 rounded-3xl"></div>
+                    <div class="h-24 bg-white/5 rounded-3xl"></div>
                 </div>
             </div>
 
             <div id="emptyInbox" class="hidden absolute inset-0 flex flex-col items-center justify-center text-center p-10 pointer-events-none">
                 <i class="fas fa-satellite-dish text-6xl text-gray-800 mb-6"></i>
                 <h3 class="text-xl font-bold text-gray-600 italic uppercase">No Transmissions</h3>
-                <p class="text-xs text-gray-700 mono mt-2 italic tracking-tighter">Listening for data packets on your identity node...</p>
+                <p class="text-xs text-gray-700 mono mt-2 italic">Listening for data packets on your identity node...</p>
             </div>
         </section>
     </main>
@@ -103,37 +103,37 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- SESSION SECURITY ---
         const session = localStorage.getItem('paradox_active_session');
         if(!session) { window.location.href = "auth-gateway.html"; }
         const userData = JSON.parse(session);
         
-        // Display User Identity
         document.getElementById('userName').innerText = (userData.user || "NODE_USER").toUpperCase();
-        document.getElementById('userIdentity').innerText = userData.identity || "PRDX-RELAY-01";
+        document.getElementById('userIdentity').innerText = userData.identity || "PRDX-CORE-UNVERIFIED";
 
-        // --- REAL-TIME DATA FETCH ---
         const mailRef = ref(db, 'paradox_ecosystem/mails/' + userData.user);
         
         onValue(mailRef, (snapshot) => {
             const mailContainer = document.getElementById('mailContainer');
             const emptyInbox = document.getElementById('emptyInbox');
+            mailContainer.innerHTML = "";
             
             if (!snapshot.exists()) {
-                mailContainer.innerHTML = ""; // Clear loader
                 emptyInbox.classList.remove('hidden');
-                document.getElementById('lastSync').innerText = new Date().toLocaleTimeString();
                 return;
             }
 
             emptyInbox.classList.add('hidden');
-            mailContainer.innerHTML = ""; // Clear loader for fresh data
-
             const mails = snapshot.val();
             const mailList = Object.keys(mails).map(key => ({id: key, ...mails[key]})).reverse();
 
             mailList.forEach(mail => {
                 const date = new Date(mail.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                
+                // --- DYNAMIC IDENTITY LOGIC ---
+                // Agar sender VIP hai toh username.pk, warna username@paradox.pk
+                const extension = (mail.senderRank === 'VIP' || mail.senderRank === 'Official') ? '.pk' : '@paradox.pk';
+                const senderDisplay = `${mail.senderID}${extension}`;
+
                 const mailDiv = document.createElement('div');
                 mailDiv.className = "mail-card p-6 rounded-3xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden group mb-4";
                 
@@ -145,7 +145,10 @@
                         </div>
                         <div>
                             <h4 class="font-bold text-sm tracking-tight text-white group-hover:text-blue-400 transition italic">
-                                ${mail.senderName || 'Anonymous Node'} <span class="text-[10px] text-gray-600 mono ml-2 lowercase">@${mail.senderID || 'unknown'}</span>
+                                ${mail.senderName || 'Anonymous'} 
+                                <span class="text-[10px] text-blue-500 mono ml-2 lowercase tracking-tighter">
+                                    ${senderDisplay}
+                                </span>
                             </h4>
                             <p class="text-xs text-gray-400 font-medium italic mt-1 tracking-tight">${mail.subject || '(No Transmission Header)'}</p>
                         </div>
