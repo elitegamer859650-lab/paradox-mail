@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inbox | Paradox Mail Secure Relay</title>
+    <meta name="description" content="Encrypted communication portal for Paradox Identity holders. Access your decentralized mail relay.">
+    <meta name="keywords" content="Paradox Mail, Secure Inbox, Paradox Studio, Decentralized Communication">
+    <meta name="author" content="Paradox Studio">
+    
+    <link rel="icon" type="image/png" href="icon.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@300;500;800&display=swap');
+        
+        :root {
+            --bg-dark: #02040a;
+            --accent-blue: #2563eb;
+            --glass: rgba(15, 23, 42, 0.6);
+        }
+
+        body { 
+            background: var(--bg-dark); 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        .mail-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .mail-card:hover {
+            border-color: var(--accent-blue);
+            transform: scale(1.01) translateX(5px);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+
+        @keyframes pulse-blue {
+            0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(37, 99, 235, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+        }
+    </style>
+</head>
+<body class="flex flex-col h-screen">
+
+    <nav class="p-6 border-b border-white/5 flex justify-between items-center bg-black/40 backdrop-blur-md">
+        <div class="flex items-center gap-4">
+            <img src="icon.png" class="w-10 h-10 rounded-xl shadow-lg shadow-blue-500/20">
+            <div>
+                <h1 class="text-xl font-black uppercase italic tracking-tighter">Paradox <span class="text-blue-500">Mail</span></h1>
+                <p class="text-[9px] mono text-gray-500 tracking-widest uppercase">Relay Node: Active</p>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-6">
+            <div class="hidden md:block text-right">
+                <p id="userName" class="text-xs font-bold text-blue-400">AUTHENTICATING...</p>
+                <p id="userIdentity" class="text-[9px] mono text-gray-600">ID_NODE_SYNCING</p>
+            </div>
+            <a href="send-mail.html" class="bg-blue-600 hover:bg-blue-500 px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest transition flex items-center gap-2">
+                <i class="fas fa-paper-plane"></i> <span class="hidden sm:inline">Compose</span>
+            </a>
+            <button onclick="logout()" class="text-gray-500 hover:text-red-500 transition"><i class="fas fa-power-off"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex flex-1 overflow-hidden">
+        
+        <aside class="w-20 md:w-64 border-r border-white/5 p-4 flex flex-col gap-4 bg-black/20">
+            <button onclick="location.reload()" class="flex items-center gap-4 p-4 rounded-2xl bg-blue-600/10 text-blue-500 border border-blue-500/20">
+                <i class="fas fa-inbox"></i> <span class="hidden md:block font-bold text-sm uppercase italic">Inbox</span>
+            </button>
+            <button onclick="window.location.href='sent-mail.html'" class="flex items-center gap-4 p-4 rounded-2xl text-gray-500 hover:bg-white/5 transition text-left">
+                <i class="fas fa-share-square"></i> <span class="hidden md:block font-bold text-sm uppercase italic">Sent Packets</span>
+            </button>
+            <div class="mt-auto p-4 rounded-2xl bg-white/5 border border-white/5 hidden md:block">
+                <p class="text-[10px] mono text-gray-600 mb-2 uppercase tracking-widest">Storage Status</p>
+                <div class="h-1 bg-gray-900 rounded-full overflow-hidden">
+                    <div class="bg-blue-600 h-full w-[12%] shadow-[0_0_5px_#2563eb]"></div>
+                </div>
+            </div>
+        </aside>
+
+        <section class="flex-1 p-6 overflow-y-auto relative">
+            <div class="flex justify-between items-end mb-10">
+                <h2 class="text-4xl font-black uppercase italic tracking-tighter">Your <br><span class="text-blue-500 text-glow">Transmission</span> Log</h2>
+                <div class="text-right mono text-[10px] text-gray-600">
+                    SECURE_PROTOCOL: AES-256 <br>
+                    LAST_SYNC: <span id="lastSync">...</span>
+                </div>
+            </div>
+
+            <div id="mailContainer" class="space-y-4">
+                <div class="animate-pulse space-y-4">
+                    <div class="h-24 bg-white/5 rounded-3xl"></div>
+                    <div class="h-24 bg-white/5 rounded-3xl"></div>
+                </div>
+            </div>
+
+            <div id="emptyInbox" class="hidden absolute inset-0 flex flex-col items-center justify-center text-center p-10">
+                <i class="fas fa-satellite-dish text-6xl text-gray-800 mb-6"></i>
+                <h3 class="text-xl font-bold text-gray-600 italic uppercase">No Transmissions</h3>
+                <p class="text-xs text-gray-700 mono mt-2 italic">Listening for data packets on your identity node...</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="p-4 border-t border-white/5 text-center bg-black/40">
+        <p class="text-[9px] mono text-gray-700 tracking-[0.4em] uppercase">Paradox Distributed Mail Architecture v2.0</p>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBJ19zQAzBoqrr-_wS0YRpNeKv4qjDFsVE",
+            authDomain: "paradox-mail-official.firebaseapp.com",
+            databaseURL: "https://paradox-mail-official-default-rtdb.firebaseio.com",
+            projectId: "paradox-mail-official",
+            storageBucket: "paradox-mail-official.firebasestorage.app",
+            messagingSenderId: "249590854132",
+            appId: "1:249590854132:web:27e6b3535d0e2dd850c9a1"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const session = localStorage.getItem('paradox_active_session');
+        if(!session) { window.location.href = "auth-gateway.html"; }
+        const userData = JSON.parse(session);
+        
+        document.getElementById('userName').innerText = userData.fullName.toUpperCase();
+        document.getElementById('userIdentity').innerText = userData.identity;
+
+        // FETCH MAILS REAL-TIME
+        const mailRef = ref(db, 'paradox_ecosystem/mails/' + userData.user);
+        
+        onValue(mailRef, (snapshot) => {
+            const mailContainer = document.getElementById('mailContainer');
+            const emptyInbox = document.getElementById('emptyInbox');
+            mailContainer.innerHTML = "";
+            
+            if (!snapshot.exists()) {
+                emptyInbox.classList.remove('hidden');
+                return;
+            }
+
+            emptyInbox.classList.add('hidden');
+            const mails = snapshot.val();
+            const mailList = Object.keys(mails).map(key => ({id: key, ...mails[key]})).reverse();
+
+            mailList.forEach(mail => {
+                const date = new Date(mail.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                
+                // Create mail element
+                const mailDiv = document.createElement('div');
+                mailDiv.className = "mail-card p-6 rounded-3xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden group";
+                
+                // Add content
+                mailDiv.innerHTML = `
+                    ${mail.isNew ? '<div class="absolute top-0 left-0 w-1 h-full bg-blue-500 shadow-[0_0_10px_#2563eb]"></div>' : ''}
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-blue-600/10 flex items-center justify-center text-blue-500 border border-blue-500/10">
+                            <i class="fas fa-user-secret"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-sm tracking-tight text-white group-hover:text-blue-400 transition">${mail.senderName} <span class="text-[10px] text-gray-600 mono ml-2">@${mail.senderID}</span></h4>
+                            <p class="text-xs text-gray-400 font-medium italic mt-1">${mail.subject}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-6 w-full md:w-auto justify-between md:justify-end">
+                        <p class="text-[10px] mono text-gray-600 uppercase italic">${date}</p>
+                        <button class="p-3 bg-white/5 rounded-xl border border-white/5 group-hover:border-blue-500/30 group-hover:text-blue-500 transition">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                `;
+
+                // --- THE REDIRECTION LOGIC ---
+                mailDiv.onclick = () => {
+                    // 1. Mark as read in Firebase
+                    if(mail.isNew) {
+                        update(ref(db, `paradox_ecosystem/mails/${userData.user}/${mail.id}`), { isNew: false });
+                    }
+                    // 2. Redirect to View Mail Page with the ID
+                    window.location.href = `view-mail.html?id=${mail.id}`;
+                };
+
+                mailContainer.appendChild(mailDiv);
+            });
+
+            document.getElementById('lastSync').innerText = new Date().toLocaleTimeString();
+        });
+
+        window.logout = () => {
+            localStorage.removeItem('paradox_active_session');
+            window.location.href = "auth-gateway.html";
+        };
+    </script>
+</body>
+</html>
