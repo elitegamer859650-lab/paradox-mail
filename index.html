@@ -37,7 +37,7 @@
             <img src="icon.png" alt="Paradox Logo" class="w-10 h-10 rounded-xl shadow-[0_0_15px_var(--accent-glow)]">
             <div class="leading-tight">
                 <span class="block text-lg font-extrabold tracking-tighter uppercase italic">Paradox <span class="text-blue-500">Studio</span></span>
-                <span class="block text-[10px] mono text-gray-500 tracking-widest uppercase">Ecosystem Core v2.0</span>
+                <span class="block text-[10px] mono text-gray-500 tracking-widest uppercase">Supabase Cloud v2.0</span>
             </div>
         </div>
         <div class="hidden lg:flex gap-10 items-center text-sm font-semibold uppercase tracking-widest text-gray-400">
@@ -51,12 +51,12 @@
     <header class="min-h-screen flex flex-col items-center justify-center text-center px-6 relative">
         <div class="gradient-blur top-0"></div>
         <div class="space-y-6 max-w-5xl z-10">
-            <span class="mono text-blue-500 text-sm font-bold border border-blue-500/30 px-4 py-1 rounded-full bg-blue-500/5">SYSTEMS_ONLINE: PARADOX_CORE</span>
+            <span class="mono text-blue-500 text-sm font-bold border border-blue-500/30 px-4 py-1 rounded-full bg-blue-500/5">SYSTEMS_ONLINE: PARADOX_SUPABASE</span>
             <h1 class="text-7xl md:text-[120px] font-[800] leading-[0.9] tracking-tighter text-glow uppercase italic">
                 DEFINING THE <br> <span class="text-blue-600">PARADOX</span>
             </h1>
             <p class="text-gray-400 text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed">
-                A globally scalable, multi-tenant ecosystem engineered for high-performance deployments. Experience frictionless authentication.
+                A globally scalable, multi-tenant ecosystem powered by Paradox Supabase Engine. Experience frictionless authentication.
             </p>
             <div class="flex flex-wrap justify-center gap-6 pt-10">
                 <button onclick="handleHeroAction()" id="heroMainBtn" class="px-10 py-5 bg-blue-600 rounded-2xl font-black text-lg shadow-xl shadow-blue-500/20 hover:scale-105 transition">EXPLORE CORE</button>
@@ -70,23 +70,23 @@
             <div class="space-y-8">
                 <h2 class="text-5xl font-extrabold uppercase italic tracking-tighter">Advanced <br> Infrastructure</h2>
                 <div class="space-y-6 text-gray-400 text-lg leading-relaxed italic">
-                    <p>Paradox Studio leverages a <strong>Serverless Distributed Network</strong> architecture. Our core logic executes at the network edge, ensuring extreme resilience.</p>
+                    <p>Paradox Studio leverages a <strong>Supabase Real-time</strong> architecture. Our core logic executes on Hugging Face Edge, ensuring extreme resilience.</p>
                     <p>By implementing a <strong>Zero-Trust Security Model</strong>, we ensure that every digital transmission is validated against our cryptographically secure protocols.</p>
                 </div>
                 <div class="flex gap-10 pt-6 border-t border-white/5">
-                    <div><p class="text-3xl font-bold text-blue-500">99.9%</p><p class="text-[10px] uppercase text-gray-600 mono">Uptime</p></div>
-                    <div><p class="text-3xl font-bold text-blue-500">&lt;50ms</p><p class="text-[10px] uppercase text-gray-600 mono">Latency</p></div>
+                    <div><p class="text-3xl font-bold text-blue-500">100%</p><p class="text-[10px] uppercase text-gray-600 mono">Data Sovereignty</p></div>
+                    <div><p class="text-3xl font-bold text-blue-500">&lt;30ms</p><p class="text-[10px] uppercase text-gray-600 mono">DB Latency</p></div>
                 </div>
             </div>
             <div class="glass-panel p-10 float-anim">
-                <div class="mono text-[12px] text-blue-400 mb-6"> > SYSTEM_LOG: BOOTING_NODE...</div>
+                <div class="mono text-[12px] text-blue-400 mb-6"> > SYSTEM_LOG: BOOTING_PARADOX_CLOUD...</div>
                 <pre class="text-xs text-gray-500 leading-6 italic">
 {
-  "node": "Paradox_Edge_01",
-  "security": "AES-256",
-  "identity": "Paradox_SSO",
-  "status": "SECURE",
-  "deployment": "Vercel_Edge"
+  "node": "Paradox_Edge_Supabase",
+  "database": "PostgreSQL_Managed",
+  "identity": "Paradox_Auth_v2",
+  "status": "OPERATIONAL",
+  "region": "Global_Mesh"
 }</pre>
             </div>
         </div>
@@ -121,42 +121,9 @@
         </div>
     </section>
 
-    <section id="identity" class="py-40 px-6 max-w-5xl mx-auto text-center">
-        <div class="space-y-12">
-            <h2 class="text-5xl font-bold italic tracking-tighter uppercase">Strategic <span class="text-blue-600">Vision</span></h2>
-            <div class="text-2xl md:text-3xl text-gray-400 leading-[1.8] font-light italic">
-                "Paradox Studio is built on the philosophy that innovation is born from complexity. Our mission is to bridge the gap between architectural engineering and seamless user experience."
-            </div>
-            <div class="flex justify-center gap-12 opacity-30 mt-20">
-                <i class="fab fa-node-js text-5xl"></i><i class="fab fa-react text-5xl"></i><i class="fab fa-google text-5xl"></i>
-            </div>
-        </div>
-    </section>
-
-    <section class="py-40 bg-black/50">
-        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-10">
-            <div class="p-8 border-l border-blue-500/30">
-                <h4 class="mono text-blue-500 text-xs mb-4 italic">> AUTH_PROTOCOL</h4>
-                <p class="text-gray-400 text-sm">Paradox SSO v2 utilizing OAuth3 standards and edge-side verification.</p>
-            </div>
-            <div class="p-8 border-l border-blue-500/30">
-                <h4 class="mono text-blue-500 text-xs mb-4 italic">> ENCRYPTION</h4>
-                <p class="text-gray-400 text-sm">Military-grade AES-256 GCM encryption for every packet dispatched.</p>
-            </div>
-            <div class="p-8 border-l border-blue-500/30">
-                <h4 class="mono text-blue-500 text-xs mb-4 italic">> STORAGE</h4>
-                <p class="text-gray-400 text-sm">Decentralized object storage with 100% data ownership for users.</p>
-            </div>
-            <div class="p-8 border-l border-blue-500/30">
-                <h4 class="mono text-blue-500 text-xs mb-4 italic">> NETWORK</h4>
-                <p class="text-gray-400 text-sm">Global CDN mesh network with zero cold-start latency on all routes.</p>
-            </div>
-        </div>
-    </section>
-
     <footer class="py-20 bg-black border-t border-white/5">
         <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-gray-500 text-[10px] tracking-[0.4em] uppercase">
-            <p>© 2026 Paradox Studio | Core Architecture</p>
+            <p>© 2026 Paradox Studio | Supabase Architecture</p>
             <p class="text-blue-500 font-black text-sm tracking-tighter italic">Official.Paradox.Pk</p>
             <div class="flex gap-8 mt-6 md:mt-0">
                 <i class="fab fa-discord text-lg hover:text-white transition"></i>
@@ -166,6 +133,24 @@
     </footer>
 
     <script>
+        const PARADOX_API = "https://elitegamer859650-pauthservice.hf.space";
+
+        // Global Signup Handler for all files
+        async function paradoxRegister(username, email, password) {
+            try {
+                const response = await fetch(`${PARADOX_API}/auth/signup`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, email, password })
+                });
+                return await response.json();
+            } catch (err) {
+                console.error("Paradox Cloud Down:", err);
+                return { success: false, error: "Cloud Connection Failed" };
+            }
+        }
+
+        // UI Sync and Subdomain Redirect Logic
         (function() {
             const hostname = window.location.hostname;
             const parts = hostname.split('.');
@@ -179,16 +164,19 @@
             if (session) {
                 const navBtn = document.getElementById('navAuthBtn');
                 const heroBtn = document.getElementById('heroMainBtn');
-                navBtn.innerText = "ACCESS INBOX";
-                navBtn.href = "inbox.html";
-                navBtn.className = "bg-green-600/10 border border-green-500/30 px-6 py-2 rounded-full text-green-400 font-bold uppercase tracking-widest";
-                heroBtn.innerText = "GO TO INBOX";
+                if(navBtn) {
+                    navBtn.innerText = "ACCESS INBOX";
+                    navBtn.href = "inbox.html";
+                    navBtn.className = "bg-green-600/10 border border-green-500/30 px-6 py-2 rounded-full text-green-400 font-bold uppercase tracking-widest";
+                }
+                if(heroBtn) heroBtn.innerText = "GO TO INBOX";
             }
         }
 
         function handleHeroAction() {
             window.location.href = localStorage.getItem('paradox_active_session') ? "inbox.html" : "auth-gateway.html";
         }
+
         window.onload = syncUI;
     </script>
 </body>
