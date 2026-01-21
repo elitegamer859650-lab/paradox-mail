@@ -1,0 +1,102 @@
+
+                </div>
+            </div>
+            
+            <h1 id="mSubject" class="text-4xl md:text-5xl font-black uppercase italic tracking-tighter leading-none mb-6 text-blue-500 transition-colors duration-1000">Opening Message...</h1>
+            
+            <div class="flex flex-wrap gap-6 mt-8">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-blue-600/10 flex items-center justify-center text-blue-500 border border-blue-500/20">
+                        <i class="fas fa-user text-xs"></i>
+                    </div>
+                    <div>
+                        <p class="text-[8px] uppercase text-gray-500 font-bold tracking-widest">From</p>
+                        <p id="mFrom" class="text-xs font-bold italic text-gray-400">Loading sender...</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-blue-600/10 flex items-center justify-center text-blue-500 border border-blue-500/20">
+                        <i class="fas fa-calendar-alt text-xs"></i>
+                    </div>
+                    <div>
+                        <p class="text-[8px] uppercase text-gray-500 font-bold tracking-widest">Received On</p>
+                        <p id="mTime" class="text-xs font-bold italic text-gray-400">Syncing time...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="relative min-h-[300px] bg-black/40 rounded-[2rem] border border-white/5 p-8 md:p-10">
+            <div id="shimmer" class="absolute inset-0 loading-shimmer rounded-[2rem] z-10"></div>
+            <p id="mBody" class="text-gray-500 leading-relaxed text-sm md:text-lg italic relative z-10 whitespace-pre-wrap transition-all duration-700">
+                Connecting to Paradox Cloud...
+                Fetching secure data packets...
+                Verifying your identity...
+                Please wait while we load your message content.
+            </p>
+        </div>
+
+        <div class="mt-12 flex flex-wrap gap-4 relative z-10">
+            <button id="replyBtn" class="px-10 py-4 bg-blue-600 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-blue-600/20 hover:scale-105 transition disabled:opacity-50">Reply to Message</button>
+            <button onclick="window.print()" class="px-8 py-4 bg-white/5 border border-white/10 rounded-2xl font-black uppercase tracking-widest text-[10px] text-gray-500 hover:text-white transition">Print Message</button>
+        </div>
+
+        <div class="mt-10 pt-6 border-t border-white/5 flex justify-between items-center text-[8px] text-gray-700 uppercase tracking-widest">
+            <span>Verified by Paradox Studio</span>
+            <span class="text-blue-900">Official.Paradox.Pk</span>
+        </div>
+    </div>
+
+    <script type="module">
+        const API_URL = "https://elitegamer859650-pauthservice.hf.space";
+        const urlParams = new URLSearchParams(window.location.search);
+        const mailId = urlParams.get('id');
+        const session = JSON.parse(localStorage.getItem('paradox_active_session'));
+
+        if(!mailId || !session) {
+            window.location.href = "inbox.html";
+        } else {
+            document.getElementById('displayId').innerText = mailId.substring(0, 8).toUpperCase();
+            loadMessage();
+        }
+
+        async function loadMessage() {
+            try {
+                const res = await fetch(`${API_URL}/auth/get-mail-body?id=${mailId}`);
+                const result = await res.json();
+
+                if(result.success) {
+                    const data = result.data;
+                    
+                    setTimeout(() => {
+                        document.getElementById('shimmer').classList.add('hidden');
+                        
+                        const subjectEl = document.getElementById('mSubject');
+                        subjectEl.innerText = data.subject || "No Subject";
+                        subjectEl.classList.remove('text-blue-500');
+                        subjectEl.classList.add('text-white');
+                        
+                        document.getElementById('mFrom').innerText = `${data.sender_id}@paradox.pk`;
+                        document.getElementById('mTime').innerText = new Date(data.created_at).toLocaleString();
+                        
+                        const bodyEl = document.getElementById('mBody');
+                        bodyEl.innerText = data.body;
+                        bodyEl.classList.remove('text-gray-500', 'italic');
+                        bodyEl.classList.add('text-gray-200');
+
+                        document.getElementById('replyBtn').onclick = () => {
+                            window.location.href = `send-mail.html?replyTo=${data.sender_id}`;
+                        };
+                    }, 1500);
+                } else {
+                    document.getElementById('mBody').innerText = "Error: Message could not be found.";
+                    document.getElementById('shimmer').classList.add('hidden');
+                }
+            } catch (e) {
+                document.getElementById('mBody').innerText = "Error: Could not connect to the server.";
+                document.getElementById('shimmer').classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
