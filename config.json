@@ -1,0 +1,9 @@
+{
+  "api_url": "https://elitegamer859650-pauthservice.hf.space",
+  "endpoints": {
+    "signup": "/auth/signup",
+    "login": "/auth/login"
+  },
+  "version": "1.0.0",
+  "status": "active"
+}
