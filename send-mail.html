@@ -67,25 +67,12 @@
     </main>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, set, push, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyBJ19zQAzBoqrr-_wS0YRpNeKv4qjDFsVE",
-            authDomain: "paradox-mail-official.firebaseapp.com",
-            databaseURL: "https://paradox-mail-official-default-rtdb.firebaseio.com",
-            projectId: "paradox-mail-official",
-            storageBucket: "paradox-mail-official.firebasestorage.app",
-            messagingSenderId: "249590854132",
-            appId: "1:249590854132:web:27e6b3535d0e2dd850c9a1"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
+        // 💠 Paradox Cloud Engine Config
+        const API_URL = "https://elitegamer859650-pauthservice.hf.space";
 
         const session = JSON.parse(localStorage.getItem('paradox_active_session'));
         if(!session) window.location.href = "auth-gateway.html";
-        document.getElementById('myId').innerText = session.identity;
+        document.getElementById('myId').innerText = session.user + "@paradox.pk";
 
         document.getElementById('sendBtn').onclick = async () => {
             const targetId = document.getElementById('target').value.trim().toLowerCase();
@@ -99,44 +86,33 @@
             overlay.style.display = "flex";
             
             try {
-                // 1. RECIPIENT VERIFICATION
-                log.innerText = "CHECKING_TARGET_NODE...";
-                const userSnap = await get(ref(db, 'paradox_ecosystem/users/' + targetId));
-                
-                if(!userSnap.exists()) {
-                    overlay.style.display = "none";
-                    alert("ERROR: Identity not found on Paradox Network.");
-                    return;
-                }
-
+                // 1. DISPATCH TO CLOUD RELAY
                 log.innerText = "ESTABLISHING_SECURE_RELAY...";
-                const timestamp = Date.now();
-
-                // 2. DISPATCH TO RECIPIENT
-                await push(ref(db, 'paradox_ecosystem/mails/' + targetId), {
-                    senderID: session.user,
-                    senderName: session.fullName,
-                    subject: sub,
-                    body: msg,
-                    timestamp: timestamp,
-                    isNew: true
+                
+                const response = await fetch(`${API_URL}/auth/send-mail`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        sender: session.user,
+                        receiver: targetId,
+                        subject: sub,
+                        message: msg
+                    })
                 });
 
-                // 3. ARCHIVE TO SENDER'S SENT FOLDER (Real-time Cloud Sync)
-                log.innerText = "ARCHIVING_TRANSMISSION...";
-                await push(ref(db, 'paradox_ecosystem/sent_archive/' + session.user), {
-                    recipientID: targetId,
-                    subject: sub,
-                    body: msg,
-                    timestamp: timestamp
-                });
+                const result = await response.json();
 
-                log.innerText = "TRANSMISSION_COMPLETE";
-                setTimeout(() => { window.location.href = "inbox.html"; }, 1000);
+                if(result.success) {
+                    log.innerText = "TRANSMISSION_COMPLETE";
+                    setTimeout(() => { window.location.href = "inbox.html"; }, 1000);
+                } else {
+                    overlay.style.display = "none";
+                    alert("ERROR: " + result.error);
+                }
 
             } catch(e) {
                 overlay.style.display = "none";
-                alert("CRITICAL_RELAY_FAILURE");
+                alert("CRITICAL_RELAY_FAILURE: Server Offline");
             }
         };
     </script>
