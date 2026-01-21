@@ -3,21 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transmit | Paradox Secure Relay</title>
+    <title>Compose Message | Paradox Mail</title>
     <link rel="icon" type="image/png" href="icon.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@300;500;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;800&display=swap');
         body { background: #02040a; font-family: 'Plus Jakarta Sans', sans-serif; color: white; overflow: hidden; }
-        .mono { font-family: 'JetBrains Mono', monospace; }
         .glass-panel { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
         .input-box { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); transition: 0.3s; }
         .input-box:focus { border-color: #2563eb; outline: none; box-shadow: 0 0 20px rgba(37, 99, 235, 0.1); }
         
-        /* Loading Overlay */
         #overlay { background: rgba(2, 4, 10, 0.95); display: none; }
     </style>
 </head>
@@ -26,48 +24,47 @@
     <nav class="p-6 border-b border-white/5 flex justify-between items-center bg-black/20">
         <div class="flex items-center gap-4">
             <img src="icon.png" class="w-10 h-10 rounded-xl">
-            <h1 class="text-xl font-black uppercase italic tracking-tighter">Paradox <span class="text-blue-500">Transmit</span></h1>
+            <h1 class="text-xl font-extrabold uppercase italic tracking-tighter">Paradox <span class="text-blue-500">Mail</span></h1>
         </div>
-        <button onclick="window.location.href='inbox.html'" class="text-gray-500 hover:text-white transition mono text-[10px] uppercase tracking-widest">
-            <i class="fas fa-times mr-2"></i> Close_Terminal
+        <button onclick="window.location.href='inbox.html'" class="text-gray-500 hover:text-white transition text-[10px] font-bold uppercase tracking-widest">
+            <i class="fas fa-times mr-2"></i> Cancel
         </button>
     </nav>
 
     <main class="flex-1 flex items-center justify-center p-6 relative">
         <div class="glass-panel w-full max-w-2xl p-10 rounded-[3rem] space-y-8 relative z-10">
             <div class="space-y-2">
-                <h2 class="text-3xl font-black uppercase italic tracking-tighter">New <span class="text-blue-500">Transmission</span></h2>
-                <p class="text-[10px] mono text-gray-600 uppercase">Authenticated As: <span id="myId" class="text-blue-900">...</span></p>
+                <h2 class="text-3xl font-extrabold uppercase italic tracking-tighter">Compose <span class="text-blue-500">Message</span></h2>
+                <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Logged in as: <span id="myId" class="text-blue-500">...</span></p>
             </div>
 
             <div class="space-y-6">
                 <div>
-                    <label class="block text-[9px] mono text-gray-500 uppercase mb-2 ml-1">Recipient Identity (@paradox.pk)</label>
-                    <input type="text" id="target" placeholder="Username (e.g. hammad)" class="input-box w-full p-4 rounded-2xl text-sm font-bold">
+                    <label class="block text-[9px] text-gray-500 uppercase font-bold mb-2 ml-1">To (Username)</label>
+                    <input type="text" id="target" placeholder="Recipient username" class="input-box w-full p-4 rounded-2xl text-sm font-bold">
                 </div>
                 <div>
-                    <label class="block text-[9px] mono text-gray-500 uppercase mb-2 ml-1">Packet Header (Subject)</label>
-                    <input type="text" id="subject" placeholder="Subject line" class="input-box w-full p-4 rounded-2xl text-sm italic">
+                    <label class="block text-[9px] text-gray-500 uppercase font-bold mb-2 ml-1">Subject</label>
+                    <input type="text" id="subject" placeholder="Enter subject" class="input-box w-full p-4 rounded-2xl text-sm italic">
                 </div>
                 <div>
-                    <label class="block text-[9px] mono text-gray-500 uppercase mb-2 ml-1">Data Payload (Message)</label>
-                    <textarea id="message" rows="5" placeholder="Enter encrypted message..." class="input-box w-full p-5 rounded-[2rem] text-sm resize-none"></textarea>
+                    <label class="block text-[9px] text-gray-500 uppercase font-bold mb-2 ml-1">Message Body</label>
+                    <textarea id="message" rows="5" placeholder="Write your message here..." class="input-box w-full p-5 rounded-[2rem] text-sm resize-none"></textarea>
                 </div>
 
                 <button id="sendBtn" class="w-full py-5 bg-blue-600 rounded-[2rem] font-black uppercase tracking-widest text-[11px] shadow-xl shadow-blue-500/30 hover:bg-blue-500 hover:scale-[1.01] transition-all">
-                    Execute Dispatch
+                    Send Message
                 </button>
             </div>
         </div>
 
         <div id="overlay" class="fixed inset-0 z-50 flex flex-col items-center justify-center">
             <div class="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-6"></div>
-            <p id="statusLog" class="mono text-[10px] text-blue-500 uppercase tracking-widest">Encrypting_Packets...</p>
+            <p id="statusLog" class="text-[10px] text-blue-500 uppercase font-bold tracking-widest">Connecting to Server...</p>
         </div>
     </main>
 
     <script type="module">
-        // 💠 Paradox Cloud Engine Config
         const API_URL = "https://elitegamer859650-pauthservice.hf.space";
 
         const session = JSON.parse(localStorage.getItem('paradox_active_session'));
@@ -81,13 +78,12 @@
             const log = document.getElementById('statusLog');
             const overlay = document.getElementById('overlay');
 
-            if(!targetId || !sub || !msg) return alert("System_Error: Payload_Incomplete");
+            if(!targetId || !sub || !msg) return alert("Error: Please fill all fields.");
 
             overlay.style.display = "flex";
             
             try {
-                // 1. DISPATCH TO CLOUD RELAY
-                log.innerText = "ESTABLISHING_SECURE_RELAY...";
+                log.innerText = "Sending Message...";
                 
                 const response = await fetch(`${API_URL}/auth/send-mail`, {
                     method: "POST",
@@ -103,16 +99,16 @@
                 const result = await response.json();
 
                 if(result.success) {
-                    log.innerText = "TRANSMISSION_COMPLETE";
+                    log.innerText = "Message Sent Successfully!";
                     setTimeout(() => { window.location.href = "inbox.html"; }, 1000);
                 } else {
                     overlay.style.display = "none";
-                    alert("ERROR: " + result.error);
+                    alert("Error: " + result.error);
                 }
 
             } catch(e) {
                 overlay.style.display = "none";
-                alert("CRITICAL_RELAY_FAILURE: Server Offline");
+                alert("Connection Error: Could not reach the server.");
             }
         };
     </script>
