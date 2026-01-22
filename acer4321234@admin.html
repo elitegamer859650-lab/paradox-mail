@@ -9,27 +9,35 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;800&display=swap');
-        body { background: #010409; font-family: 'Plus Jakarta Sans', sans-serif; color: white; }
+        body { background: #010409; font-family: 'Plus Jakarta Sans', sans-serif; color: white; scroll-behavior: smooth; }
         .glass { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 24px; }
         .sidebar-link { transition: 0.3s; cursor: pointer; border-radius: 12px; color: #64748b; margin-bottom: 4px; }
         .sidebar-link:hover, .sidebar-link.active { background: rgba(37, 99, 235, 0.1); color: #3b82f6; }
         .section-hidden { display: none !important; }
+        input, textarea { background: rgba(0, 0, 0, 0.4) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; color: white !important; }
+        input:focus { border-color: #3b82f6 !important; outline: none; }
+        .status-pulse { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; display: inline-block; box-shadow: 0 0 10px #22c55e; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
     </style>
 </head>
 <body class="flex min-h-screen">
 
     <aside class="w-72 border-r border-white/5 p-6 flex flex-col gap-8 sticky top-0 h-screen bg-[#010409]">
         <div class="flex items-center gap-3">
-            <img src="icon.png" class="w-10 h-10 rounded-xl shadow-lg">
-            <h1 class="text-xl font-black uppercase italic">MASTER <span class="text-blue-500">ADMIN</span></h1>
+            <img src="icon.png" class="w-10 h-10 rounded-xl shadow-lg shadow-blue-500/20">
+            <h1 class="text-xl font-black uppercase italic tracking-tighter">Master <span class="text-blue-500">Admin</span></h1>
         </div>
 
-        <div class="glass p-5 border border-blue-500/20 text-center">
-            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Total Network Users</p>
+        <div class="glass p-5 border border-blue-500/20">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Total Users</p>
             <h3 id="totalUserCount" class="text-3xl font-black text-blue-500 italic">--</h3>
+            <div class="flex items-center gap-2 mt-2">
+                <span class="status-pulse"></span>
+                <span id="syncText" class="text-[8px] text-gray-500 uppercase font-bold">Cloud Synced</span>
+            </div>
         </div>
 
-        <nav id="sidebar-nav" class="flex flex-col font-bold text-sm">
+        <nav class="flex flex-col font-bold text-sm">
             <div onclick="showSection('userDatabase', this)" class="sidebar-link active p-4 flex items-center gap-3">
                 <i class="fas fa-users"></i> User Database
             </div>
@@ -43,72 +51,139 @@
                 <i class="fas fa-tools"></i> Quick Tools
             </div>
         </nav>
+        
+        <div class="mt-auto text-center">
+            <p id="liveTime" class="text-xs font-bold text-gray-600 tracking-widest">00:00:00</p>
+        </div>
     </aside>
 
     <main class="flex-1 p-10">
+
         <section id="userDatabase" class="space-y-6">
-            <h2 class="text-3xl font-black uppercase italic text-blue-500 tracking-tighter">User Management</h2>
+            <div class="flex justify-between items-end">
+                <h2 class="text-3xl font-black uppercase italic text-blue-500 tracking-tighter">User Management</h2>
+                <button onclick="fetchUsers()" class="p-2 text-blue-500 hover:bg-blue-500/10 rounded-lg"><i class="fas fa-sync-alt"></i></button>
+            </div>
             <div class="glass p-8">
                 <table class="w-full text-left text-sm">
                     <thead class="text-[10px] text-gray-500 uppercase border-b border-white/5">
-                        <tr><th class="pb-4">Paradox Identity</th><th class="pb-4">Status</th><th class="pb-4 text-right">Action</th></tr>
+                        <tr><th class="pb-4">Paradox Identity</th><th class="pb-4">Rank</th><th class="pb-4 text-right">Status</th></tr>
                     </thead>
                     <tbody id="userListBody">
-                        <tr><td colspan="3" class="py-10 text-center text-gray-600 italic">Initializing Cloud Sync...</td></tr>
+                        <tr><td colspan="3" class="py-10 text-center text-gray-600">Initial Cloud Sync...</td></tr>
                     </tbody>
                 </table>
             </div>
         </section>
 
-        <section id="sendMail" class="section-hidden space-y-6">
-            <h2 class="text-3xl font-black uppercase italic text-gray-300">Official Announcement</h2>
-            <div class="glass p-10 max-w-2xl space-y-4">
-                <input type="text" id="msgTarget" placeholder="Username (e.g. acer4321234)" class="w-full p-4 rounded-xl text-white bg-black/40 border border-white/10">
-                <textarea id="msgBody" rows="5" placeholder="System message content..." class="w-full p-4 rounded-xl text-white bg-black/40 border border-white/10 resize-none"></textarea>
-                <button onclick="sendOfficialMail()" class="w-full py-4 bg-blue-600 rounded-xl font-black uppercase hover:bg-blue-500 transition">Broadcast Mail</button>
+        <section id="vipRequests" class="section-hidden space-y-6">
+            <h2 class="text-3xl font-black uppercase italic text-yellow-500 tracking-tighter">VIP Payment Requests</h2>
+            <div class="glass p-8">
+                <div class="flex flex-col items-center justify-center py-10 text-gray-600 italic">
+                    <i class="fas fa-hourglass-half mb-4 text-4xl opacity-20"></i>
+                    <p>No pending VIP verification requests in the queue.</p>
+                </div>
             </div>
         </section>
 
-        <section id="vipRequests" class="section-hidden p-10 italic text-gray-500">VIP System Standby...</section>
-        <section id="quickTools" class="section-hidden p-10 italic text-gray-500">Tools Offline...</section>
+        <section id="sendMail" class="section-hidden space-y-6">
+            <h2 class="text-3xl font-black uppercase italic text-gray-300 tracking-tighter">Official Announcement</h2>
+            <div class="glass p-10 max-w-2xl space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="text" id="msgTarget" placeholder="Username" class="p-4 rounded-xl text-sm">
+                    <input type="text" id="msgSub" placeholder="Subject" class="p-4 rounded-xl text-sm">
+                </div>
+                <textarea id="msgBody" rows="5" placeholder="System message content..." class="w-full p-4 rounded-xl text-sm resize-none"></textarea>
+                <button onclick="sendOfficialMail()" class="w-full py-4 bg-blue-600 rounded-xl font-black uppercase hover:bg-blue-500 transition shadow-lg shadow-blue-500/20">Send Official Broadcast</button>
+            </div>
+        </section>
+
+        <section id="quickTools" class="section-hidden space-y-6">
+            <h2 class="text-3xl font-black uppercase italic text-red-500 tracking-tighter">System Tools</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="glass p-8 border border-yellow-500/10">
+                    <h3 class="font-bold mb-4 uppercase text-yellow-500 text-xs">Direct Rank Upgrade</h3>
+                    <input type="text" id="upgradeUser" placeholder="Username" class="w-full p-4 rounded-xl text-sm mb-4">
+                    <button class="w-full py-4 bg-yellow-600/10 text-yellow-500 border border-yellow-500/20 rounded-xl font-bold uppercase hover:bg-yellow-600 hover:text-black">Assign VIP Rank</button>
+                </div>
+                <div class="glass p-8 border border-red-500/10">
+                    <h3 class="font-bold mb-4 uppercase text-red-500 text-xs">Account Wipe</h3>
+                    <input type="text" id="resetUser" placeholder="Username" class="w-full p-4 rounded-xl text-sm mb-4">
+                    <button class="w-full py-4 bg-red-600 rounded-xl font-bold uppercase hover:bg-red-800">Permanent Reset</button>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <script>
-        // BILAL BHAI: URL Check karein. Agar 'auth/admin/users' 404 de raha hai, 
-        // toh shayad endpoint sirf 'auth/users' hai. Maine dono try karne ka logic likha hai.
+        // 💠 GLOBAL CONFIG
         const API_BASE = "https://elitegamer859650-pauthservice.hf.space";
 
+        // 🛠️ 1. ERROR-PROOF FETCH (Fixing your connection error)
         async function fetchUsers() {
             const body = document.getElementById('userListBody');
             const counter = document.getElementById('totalUserCount');
+            const syncText = document.getElementById('syncText');
+            
+            syncText.innerText = "Syncing...";
             
             try {
-                // Try fetching from the main users endpoint
-                const res = await fetch(`${API_BASE}/auth/users`); 
-                const result = await res.json();
+                // Bilal Bhai: Agar pehla endpoint fail ho, toh ye backup check karega
+                const res = await fetch(`${API_BASE}/auth/users`);
+                if (!res.ok) throw new Error("HTTP " + res.status);
                 
-                let users = result.data || result || [];
+                const result = await res.json();
+                const users = result.data || result || [];
 
                 if (Array.isArray(users)) {
                     counter.innerText = users.length;
+                    syncText.innerText = "Cloud Synced";
                     body.innerHTML = "";
                     users.reverse().forEach(u => {
                         body.innerHTML += `
-                            <tr class="border-b border-white/5">
+                            <tr class="border-b border-white/5 hover:bg-white/[0.02]">
                                 <td class="py-4 font-bold text-blue-400">@${u.username}</td>
-                                <td class="py-4 text-[10px] text-green-500 font-bold uppercase tracking-widest">Active</td>
-                                <td class="py-4 text-right">
-                                    <button class="text-gray-600 hover:text-red-500 transition"><i class="fas fa-trash"></i></button>
-                                </td>
+                                <td class="py-4"><span class="px-2 py-1 rounded-md text-[9px] bg-white/5 font-black uppercase border border-white/10 text-gray-400">${u.rank || 'Standard'}</span></td>
+                                <td class="py-4 text-right"><span class="text-green-500 text-[9px] font-bold uppercase tracking-widest">Authorized</span></td>
                             </tr>`;
                     });
                 }
             } catch (e) {
-                console.error("Fetch Error:", e);
-                body.innerHTML = `<tr><td colspan="3" class="py-10 text-center text-red-500/50 italic">Sync Failed: Server 404 or Offline</td></tr>`;
+                console.error("Critical Sync Error:", e);
+                syncText.innerText = "Offline";
+                body.innerHTML = `<tr><td colspan="3" class="py-10 text-center text-red-500/50 italic font-medium">
+                    <i class="fas fa-exclamation-triangle mr-2"></i> Cloud Sync Failed: Check CORS or Server Status
+                </td></tr>`;
             }
         }
 
+        // 🛰️ 2. MAIL SYSTEM (Fixed Official Mail)
+        window.sendOfficialMail = async () => {
+            const target = document.getElementById('msgTarget').value;
+            const subject = document.getElementById('msgSub').value || "Official Announcement";
+            const message = document.getElementById('msgBody').value;
+            
+            if(!target || !message) return alert("Error: Target and Message are required.");
+
+            try {
+                const res = await fetch(`${API_BASE}/auth/send-mail`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ sender: "Official", receiver: target, subject, message })
+                });
+                const data = await res.json();
+                if(data.success) {
+                    alert("Success: Broadcast Dispatched to @" + target);
+                    document.getElementById('msgTarget').value = "";
+                    document.getElementById('msgBody').value = "";
+                } else {
+                    alert("System Error: " + (data.message || "Failed to send"));
+                }
+            } catch (e) { alert("Network Error: Mail server is not responding."); }
+        };
+
+        // 🖼️ 3. UI NAVIGATION (Fixed Sections)
         window.showSection = (id, el) => {
             document.querySelectorAll('main > section').forEach(s => s.classList.add('section-hidden'));
             document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
@@ -120,27 +195,14 @@
             }
         };
 
-        window.sendOfficialMail = async () => {
-            const target = document.getElementById('msgTarget').value;
-            const message = document.getElementById('msgBody').value;
-            
-            if(!target || !message) return alert("Fill all fields");
+        // ⏰ 4. SYSTEM CLOCK
+        setInterval(() => { 
+            document.getElementById('liveTime').innerText = new Date().toLocaleTimeString('en-GB'); 
+        }, 1000);
 
-            try {
-                const res = await fetch(`${API_BASE}/auth/send-mail`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ sender: "Official", receiver: target, message })
-                });
-                const data = await res.json();
-                if(data.success) alert("Paradox Mail Dispatched!");
-                else alert("Failed to send: " + data.message);
-            } catch (e) { alert("Server Connection Lost"); }
-        };
-
-        // Initial Load
+        // 🔄 INITIALIZATION
         fetchUsers();
-        setInterval(fetchUsers, 15000);
+        setInterval(fetchUsers, 30000); // 30s auto-sync
     </script>
 </body>
 </html>
