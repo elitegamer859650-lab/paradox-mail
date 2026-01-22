@@ -16,8 +16,6 @@
         .section-hidden { display: none !important; }
         input, textarea { background: rgba(0, 0, 0, 0.4) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; color: white !important; transition: 0.3s; }
         input:focus, textarea:focus { border-color: #3b82f6 !important; box-shadow: 0 0 15px rgba(59, 130, 246, 0.1); outline: none; }
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
     </style>
 </head>
 <body class="flex min-h-screen">
@@ -38,9 +36,6 @@
             <div onclick="showSection('userDatabase', this)" class="sidebar-link active p-4 flex items-center gap-3">
                 <i class="fas fa-users"></i> User Database
             </div>
-            <div onclick="showSection('vipRequests', this)" class="sidebar-link p-4 flex items-center gap-3">
-                <i class="fas fa-crown"></i> VIP Requests
-            </div>
             <div onclick="showSection('sendMail', this)" class="sidebar-link p-4 flex items-center gap-3">
                 <i class="fas fa-paper-plane"></i> Official Mail
             </div>
@@ -54,38 +49,21 @@
 
         <section id="userDatabase" class="space-y-6">
             <div class="flex justify-between items-end">
-                <div>
-                    <h2 class="text-3xl font-black uppercase italic text-blue-500 tracking-tighter">User Management</h2>
-                    <p class="text-gray-500 text-[10px] uppercase font-bold tracking-widest">Database Node: Active</p>
-                </div>
+                <h2 class="text-3xl font-black uppercase italic text-blue-500 tracking-tighter">User Management</h2>
                 <button onclick="fetchUsers()" class="p-3 bg-white/5 rounded-xl hover:bg-white/10 text-blue-500 transition"><i class="fas fa-sync-alt"></i></button>
             </div>
             <div class="glass p-8">
                 <table class="w-full text-left text-sm">
                     <thead class="text-[10px] text-gray-500 uppercase border-b border-white/5">
-                        <tr>
-                            <th class="pb-4">Paradox Identity</th>
-                            <th class="pb-4">Rank</th>
-                            <th class="pb-4 text-right">Administrative Action</th>
-                        </tr>
+                        <tr><th class="pb-4">Paradox Identity</th><th class="pb-4 text-right">Action</th></tr>
                     </thead>
-                    <tbody id="userListBody">
-                        <tr><td colspan="3" class="py-10 text-center text-gray-600 italic">Connecting to Database...</td></tr>
-                    </tbody>
+                    <tbody id="userListBody"></tbody>
                 </table>
             </div>
         </section>
 
-        <section id="vipRequests" class="section-hidden space-y-6">
-            <h2 class="text-3xl font-black uppercase italic text-yellow-500 tracking-tighter">VIP Requests</h2>
-            <div class="glass p-12 text-center">
-                <i class="fas fa-crown text-4xl text-yellow-500/20 mb-4"></i>
-                <p class="text-gray-500 italic">No pending VIP verifications found.</p>
-            </div>
-        </section>
-
         <section id="sendMail" class="section-hidden space-y-6">
-            <h2 class="text-3xl font-black uppercase italic text-gray-300 tracking-tighter">Paradox <span class="text-blue-500">Broadcaster</span></h2>
+            <h2 class="text-3xl font-black uppercase italic text-gray-300 tracking-tighter">Official <span class="text-blue-500">Broadcaster</span></h2>
             <div class="glass p-10 max-w-3xl space-y-6">
                 <div class="grid grid-cols-2 gap-6">
                     <div class="space-y-2">
@@ -93,29 +71,20 @@
                         <input type="text" id="msgTarget" placeholder="@username" class="w-full p-4 rounded-xl text-sm border border-white/5">
                     </div>
                     <div class="space-y-2">
-                        <label class="text-[10px] font-bold text-gray-500 uppercase ml-2">Email Subject</label>
-                        <input type="text" id="msgSub" placeholder="System Update" class="w-full p-4 rounded-xl text-sm border border-white/5">
+                        <label class="text-[10px] font-bold text-gray-500 uppercase ml-2">Subject</label>
+                        <input type="text" id="msgSub" placeholder="System Notification" class="w-full p-4 rounded-xl text-sm border border-white/5">
                     </div>
                 </div>
 
-                <div class="space-y-2">
-                    <label class="text-[10px] font-bold text-gray-500 uppercase ml-2">Message Body</label>
-                    <textarea id="msgBody" rows="5" placeholder="Write your professional message here..." class="w-full p-4 rounded-xl text-sm resize-none border border-white/5"></textarea>
-                </div>
+                <textarea id="msgBody" rows="5" placeholder="Write message to user's inbox..." class="w-full p-4 rounded-xl text-sm resize-none border border-white/5"></textarea>
 
                 <div class="grid grid-cols-2 gap-6 p-6 bg-blue-500/5 rounded-2xl border border-blue-500/10">
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-bold text-blue-500 uppercase ml-2">Action Button Text</label>
-                        <input type="text" id="msgBtnText" placeholder="e.g. Verify Account" class="w-full p-4 rounded-xl text-sm border border-white/5">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-bold text-blue-500 uppercase ml-2">Redirect URL (Link)</label>
-                        <input type="text" id="msgBtnLink" placeholder="https://paradox.pk/verify" class="w-full p-4 rounded-xl text-sm border border-white/5">
-                    </div>
+                    <input type="text" id="msgBtnText" placeholder="Button Text (Optional)" class="w-full p-4 rounded-xl text-sm">
+                    <input type="text" id="msgBtnLink" placeholder="Action Link (Optional)" class="w-full p-4 rounded-xl text-sm">
                 </div>
 
-                <button onclick="sendOfficialMail()" class="w-full py-5 bg-blue-600 rounded-xl font-black uppercase hover:bg-blue-500 transition shadow-lg shadow-blue-500/20 flex items-center justify-center gap-3">
-                    <i class="fas fa-paper-plane text-xs"></i> Send Professional Broadcast
+                <button onclick="sendOfficialMail()" class="w-full py-5 bg-blue-600 rounded-xl font-black uppercase hover:bg-blue-500 transition shadow-lg shadow-blue-500/20">
+                    <i class="fas fa-paper-plane mr-2 text-xs"></i> Deliver to Inbox
                 </button>
             </div>
         </section>
@@ -123,9 +92,8 @@
         <section id="quickTools" class="section-hidden space-y-6">
             <h2 class="text-3xl font-black uppercase italic text-red-500 tracking-tighter">System Tools</h2>
             <div class="glass p-8 max-w-md border border-red-500/10">
-                <h3 class="font-bold mb-4 uppercase text-red-500 text-xs italic tracking-widest">Permanent Account Wipe</h3>
-                <input type="text" id="wipeTarget" placeholder="Username to delete" class="w-full p-4 rounded-xl text-sm mb-4 border border-white/5">
-                <button onclick="directWipe()" class="w-full py-4 bg-red-600 rounded-xl font-black uppercase hover:bg-red-800 transition">Execute Wipe</button>
+                <input type="text" id="wipeTarget" placeholder="Username to wipe" class="w-full p-4 rounded-xl text-sm mb-4">
+                <button onclick="directWipe()" class="w-full py-4 bg-red-600 rounded-xl font-black uppercase">Execute Wipe</button>
             </div>
         </section>
 
@@ -134,89 +102,67 @@
     <script>
         const API_URL = "https://elitegamer859650-pauthservice.hf.space";
 
-        // 💠 FETCH USERS
         async function fetchUsers() {
-            const body = document.getElementById('userListBody');
-            const counter = document.getElementById('totalUserCount');
-            const status = document.getElementById('syncStatus');
-
             try {
-                status.innerText = "Syncing...";
                 const res = await fetch(`${API_URL}/auth/users`);
                 const result = await res.json();
-                
-                if (result.success && Array.isArray(result.data)) {
-                    counter.innerText = result.data.length;
+                if (result.success) {
+                    document.getElementById('totalUserCount').innerText = result.data.length;
+                    const body = document.getElementById('userListBody');
                     body.innerHTML = "";
                     result.data.forEach(u => {
                         body.innerHTML += `
-                            <tr class="border-b border-white/5 hover:bg-white/[0.02] transition">
+                            <tr class="border-b border-white/5">
                                 <td class="py-4 font-bold text-blue-400 italic">@${u.username}</td>
-                                <td class="py-4"><span class="px-2 py-0.5 rounded bg-white/5 text-[9px] font-black uppercase border border-white/10 text-gray-500">Authorized</span></td>
                                 <td class="py-4 text-right">
-                                    <button onclick="deleteUser('${u.username}')" class="w-8 h-8 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition">
-                                        <i class="fas fa-trash-alt text-[10px]"></i>
-                                    </button>
+                                    <button onclick="deleteUser('${u.username}')" class="text-red-500/50 hover:text-red-500"><i class="fas fa-trash-alt text-xs"></i></button>
                                 </td>
                             </tr>`;
                     });
-                    status.innerText = "Engine Synced";
                 }
-            } catch (e) {
-                status.innerText = "Sync Failed";
-                body.innerHTML = '<tr><td colspan="3" class="py-10 text-center text-red-500/50 italic">Cloud Connection Offline.</td></tr>';
-            }
+            } catch (e) { console.error("Sync Failed"); }
         }
 
-        // 💠 RICH MAIL BROADCAST (Fixed with Link & Button Support)
+        // 💠 OFFICIAL MAIL -> INBOX INTEGRATION
         window.sendOfficialMail = async () => {
-            const target = document.getElementById('msgTarget').value;
-            const subject = document.getElementById('msgSub').value;
-            const message = document.getElementById('msgBody').value;
-            const buttonText = document.getElementById('msgBtnText').value;
-            const buttonLink = document.getElementById('msgBtnLink').value;
+            const target = document.getElementById('msgTarget').value.trim();
+            const subject = document.getElementById('msgSub').value.trim();
+            const message = document.getElementById('msgBody').value.trim();
+            const bText = document.getElementById('msgBtnText').value.trim();
+            const bLink = document.getElementById('msgBtnLink').value.trim();
 
-            if(!target || !message) return alert("Bhai, Target aur Message zaroori hain!");
+            if(!target || !message) return alert("Bhai, recipient aur message lazmi hai!");
 
             try {
+                // Ye request backend ki index.js mein jayegi aur supabase table 'mails' mein save hogi
                 const res = await fetch(`${API_URL}/auth/send-mail`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ 
+                        sender: "Official", 
                         receiver: target, 
-                        subject: subject,
+                        subject: subject || "Paradox Studio", 
                         message: message,
-                        buttonText: buttonText,
-                        buttonLink: buttonLink
+                        buttonText: bText,
+                        buttonLink: bLink
                     })
                 });
                 const data = await res.json();
                 if(data.success) {
-                    alert("Professional Broadcast Dispatched to @" + target);
-                    // Clear inputs
+                    alert("Paradox Mail delivered to @" + target + "'s inbox!");
                     document.getElementById('msgBody').value = "";
-                    document.getElementById('msgBtnLink').value = "";
                 }
-            } catch (e) { alert("Mail Engine Error. Check Backend."); }
+            } catch (e) { alert("Delivery Engine Error."); }
         };
 
-        // 💠 DELETE LOGIC
         window.deleteUser = async (username) => {
-            if (!confirm(`Wipe @${username} permanently?`)) return;
-            try {
-                const res = await fetch(`${API_URL}/auth/delete-user`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ username })
-                });
-                const data = await res.json();
-                if (data.success) { fetchUsers(); alert("Identity Wiped."); }
-            } catch (e) { alert("Action Failed."); }
-        };
-
-        window.directWipe = () => {
-            const user = document.getElementById('wipeTarget').value;
-            if(user) deleteUser(user);
+            if (!confirm(`Delete @${username}?`)) return;
+            await fetch(`${API_URL}/auth/delete-user`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username })
+            });
+            fetchUsers();
         };
 
         window.showSection = (id, el) => {
@@ -227,7 +173,6 @@
         };
 
         fetchUsers();
-        setInterval(fetchUsers, 20000);
     </script>
 </body>
 </html>
