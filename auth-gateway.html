@@ -3,125 +3,217 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Master Control | Paradox Studio</title>
-    <link rel="icon" type="image/png" href="icon.png">
+    <title>Paradox Gateway | Secure Access</title>
+    
+    <link rel="icon" type="image/png" href="icon.png?v=5.0">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;800&display=swap');
-        body { background: #010409; font-family: 'Plus Jakarta Sans', sans-serif; color: white; }
-        .glass { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 24px; }
-        .sidebar-link { transition: 0.3s; cursor: pointer; border-radius: 12px; color: #64748b; margin-bottom: 4px; }
-        .sidebar-link:hover, .sidebar-link.active { background: rgba(37, 99, 235, 0.1); color: #3b82f6; }
-        .section-hidden { display: none !important; }
-        .status-pill { padding: 4px 10px; border-radius: 99px; font-size: 9px; font-weight: 800; text-transform: uppercase; }
-    </style>
-</head>
-<body class="flex min-h-screen">
-
-    <aside class="w-72 border-r border-white/5 p-6 flex flex-col gap-8 sticky top-0 h-screen bg-[#010409]">
-        <div class="flex items-center gap-3">
-            <img src="icon.png" class="w-10 h-10 rounded-xl shadow-lg shadow-blue-500/20">
-            <h1 class="text-xl font-black uppercase italic tracking-tighter">Master <span class="text-blue-500">Admin</span></h1>
-        </div>
-
-        <div class="glass p-5 border border-blue-500/20">
-            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Total Users</p>
-            <h3 id="totalUserCount" class="text-3xl font-black text-blue-500 italic">--</h3>
-            <div id="engine-status" class="mt-2">
-                <span class="status-pill bg-blue-500/10 text-blue-500 italic">Connecting...</span>
-            </div>
-        </div>
-
-        <nav class="flex flex-col font-bold text-sm">
-            <div onclick="showSection('userDatabase', this)" class="sidebar-link active p-4 flex items-center gap-3">
-                <i class="fas fa-users"></i> User Database
-            </div>
-            <div onclick="showSection('sendMail', this)" class="sidebar-link p-4 flex items-center gap-3">
-                <i class="fas fa-paper-plane"></i> Official Mail
-            </div>
-        </nav>
-    </aside>
-
-    <main class="flex-1 p-10">
-        <section id="userDatabase" class="space-y-6">
-            <div class="flex justify-between items-center">
-                <h2 class="text-3xl font-black uppercase italic text-blue-500">User Management</h2>
-                <button onclick="fetchUsers()" class="px-4 py-2 bg-white/5 rounded-lg text-xs font-bold hover:bg-white/10 transition">RE-SYNC</button>
-            </div>
-            <div class="glass p-8">
-                <table class="w-full text-left text-sm">
-                    <thead class="text-[10px] text-gray-500 uppercase border-b border-white/5">
-                        <tr><th class="pb-4">Paradox ID</th><th class="pb-4">Status</th><th class="pb-4 text-right">Action</th></tr>
-                    </thead>
-                    <tbody id="userListBody">
-                        <tr><td colspan="3" class="py-10 text-center text-gray-600 italic">Requesting Database Access...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <section id="sendMail" class="section-hidden space-y-6">
-             <h2 class="text-3xl font-black uppercase italic text-gray-300">Official Announcement</h2>
-             <div class="glass p-10 max-w-2xl italic text-gray-500">Mail System Ready.</div>
-        </section>
-    </main>
-
-    <script>
-        // BILAL BHAI: Yahan EXACT URL check karein jo paradox mail mein hai.
-        const API_BASE = "https://elitegamer859650-pauthservice.hf.space";
-
-        async function fetchUsers() {
-            const body = document.getElementById('userListBody');
-            const counter = document.getElementById('totalUserCount');
-            const statusBox = document.getElementById('engine-status');
-
-            try {
-                // Bypass logic: mode cors aur cache no-store lazmi hain
-                const res = await fetch(`${API_BASE}/auth/users`, {
-                    method: 'GET',
-                    mode: 'cors',
-                    cache: 'no-store',
-                    headers: { 'Content-Type': 'application/json' }
-                });
-
-                if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
-
-                const result = await res.json();
-                const users = result.data || result || [];
-
-                if (Array.isArray(users)) {
-                    counter.innerText = users.length;
-                    statusBox.innerHTML = '<span class="status-pill bg-green-500/10 text-green-500 italic">Engine Online</span>';
-                    body.innerHTML = "";
-                    users.reverse().forEach(u => {
-                        body.innerHTML += `
-                            <tr class="border-b border-white/5">
-                                <td class="py-4 font-bold text-blue-400">@${u.username}</td>
-                                <td class="py-4"><span class="text-green-500 text-[10px] font-bold uppercase tracking-widest">Authorized</span></td>
-                                <td class="py-4 text-right"><i class="fas fa-trash text-gray-800"></i></td>
-                            </tr>`;
-                    });
-                }
-            } catch (e) {
-                console.error("Critical Sync Error:", e);
-                statusBox.innerHTML = '<span class="status-pill bg-red-500/10 text-red-500 italic">Engine Offline</span>';
-                body.innerHTML = `<tr><td colspan="3" class="py-10 text-center text-red-500/50 italic">
-                    Connection Refused: CORS or Server 404. Check Console (F12).
-                </td></tr>`;
-            }
+        
+        body { 
+            background: #05070a; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            color: white; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
         }
 
-        window.showSection = (id, el) => {
-            document.querySelectorAll('main > section').forEach(s => s.classList.add('section-hidden'));
-            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
-            document.getElementById(id).classList.remove('section-hidden');
-            el.classList.add('active');
+        /* 🌑 DARK GLASSMORPHISM */
+        .glass-box { 
+            background: rgba(255, 255, 255, 0.02); 
+            backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            border-radius: 40px; 
+            padding: 3.5rem 2.5rem;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.5);
+        }
+
+        .input-style { 
+            background: rgba(0, 0, 0, 0.4); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            outline: none; 
+            transition: 0.3s; 
+            width: 100%;
+            padding: 1.25rem;
+            border-radius: 20px;
+            color: white;
+            font-size: 0.875rem;
+        }
+
+        .input-style:focus { 
+            border-color: #3b82f6; 
+            background: rgba(59, 130, 246, 0.05); 
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
+        }
+
+        .tab-btn { 
+            padding: 12px; 
+            font-size: 13px; 
+            font-weight: 700; 
+            color: #64748b; 
+            transition: 0.3s; 
+            border-bottom: 2px solid transparent; 
+            flex: 1;
+        }
+
+        .tab-btn.active { color: #3b82f6; border-bottom-color: #3b82f6; }
+        .hidden { display: none; }
+
+        .btn-glow {
+            transition: 0.4s;
+            box-shadow: 0 10px 30px -10px rgba(59, 130, 246, 0.4);
+        }
+        .btn-glow:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px -10px rgba(59, 130, 246, 0.6);
+        }
+
+        /* Status indicator */
+        .status-pill {
+            font-size: 9px;
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glass-box">
+        <div class="text-center mb-10">
+            <img src="icon.png" class="w-16 h-16 mx-auto rounded-2xl mb-4 shadow-2xl shadow-blue-500/20">
+            <h1 class="text-2xl font-extrabold tracking-tight italic uppercase">Paradox <span class="text-blue-600">Mail</span></h1>
+            <div id="conn-status" class="mt-2">
+                <span class="status-pill bg-gray-800 text-gray-500 italic">Checking Engine...</span>
+            </div>
+        </div>
+
+        <div class="flex mb-10 border-b border-white/5">
+            <button id="showLogin" class="tab-btn active">Login</button>
+            <button id="showRegister" class="tab-btn">Sign Up</button>
+        </div>
+
+        <div id="loginSection" class="space-y-4">
+            <div class="relative">
+                <input type="text" id="loginUser" placeholder="Username" class="input-style">
+                <span class="absolute right-5 top-5 text-[10px] text-gray-600 font-bold uppercase">@paradox.pk</span>
+            </div>
+            <input type="password" id="loginPass" placeholder="Password" class="input-style">
+            <button id="doLogin" class="w-full py-4 bg-blue-600 hover:bg-blue-500 rounded-2xl font-bold text-sm transition btn-glow">Verify Identity</button>
+        </div>
+
+        <div id="registerSection" class="space-y-4 hidden">
+            <input type="text" id="regName" placeholder="Full Name" class="input-style">
+            <div class="relative">
+                <input type="text" id="regUser" placeholder="Username" class="input-style lowercase">
+                <span class="absolute right-5 top-5 text-[10px] text-blue-500 font-bold uppercase">@paradox.pk</span>
+            </div>
+            <input type="password" id="regPass" placeholder="Password" class="input-style">
+            <button id="doRegister" class="w-full py-4 bg-white text-black hover:bg-gray-200 rounded-2xl font-bold text-sm transition">Establish Identity</button>
+        </div>
+
+        <p class="text-center text-[9px] text-gray-600 mt-10 uppercase font-black tracking-widest">© 2026 Paradox Cloud Nodes</p>
+    </div>
+
+    <script>
+        const API_URL = "https://elitegamer859650-pauthservice.hf.space";
+
+        // 🔍 DATABASE CONNECTION CHECK
+        async function checkEngine() {
+            const statusBox = document.getElementById('conn-status');
+            try {
+                const res = await fetch(API_URL + "/");
+                if(res.ok) {
+                    statusBox.innerHTML = '<span class="status-pill bg-green-500/10 text-green-500 italic">Cloud Engine Online</span>';
+                }
+            } catch (e) {
+                statusBox.innerHTML = '<span class="status-pill bg-red-500/10 text-red-500 italic">Engine Offline</span>';
+            }
+        }
+        checkEngine();
+
+        // TAB LOGIC
+        const btns = [document.getElementById('showLogin'), document.getElementById('showRegister')];
+        const secs = [document.getElementById('loginSection'), document.getElementById('registerSection')];
+
+        btns.forEach((btn, i) => {
+            btn.onclick = () => {
+                btns.forEach(b => b.classList.remove('active'));
+                secs.forEach(s => s.classList.add('hidden'));
+                btn.classList.add('active');
+                secs[i].classList.remove('hidden');
+            };
+        });
+
+        // 🛡️ LOGIN LOGIC
+        document.getElementById('doLogin').onclick = async () => {
+            const user = document.getElementById('loginUser').value.trim().toLowerCase();
+            const pass = document.getElementById('loginPass').value.trim();
+            const btn = document.getElementById('doLogin');
+
+            if(!user || !pass) return alert("Credentials required.");
+            btn.innerText = "Connecting...";
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(`${API_URL}/auth/login`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username: user, password: pass })
+                });
+                const result = await res.json();
+                
+                if(result.success) {
+                    // Rank hataya, seedha data save kiya
+                    localStorage.setItem('paradox_active_session', JSON.stringify({
+                        user: result.data.username,
+                        email: result.data.email
+                    }));
+                    window.location.href = "home.html";
+                } else {
+                    alert("Error: " + result.error);
+                    btn.innerText = "Verify Identity";
+                    btn.disabled = false;
+                }
+            } catch (err) { 
+                alert("Cloud Connectivity Failed."); 
+                btn.innerText = "Verify Identity";
+                btn.disabled = false;
+            }
         };
 
-        // Run
-        fetchUsers();
-        setInterval(fetchUsers, 20000);
+        // 📝 REGISTER LOGIC
+        document.getElementById('doRegister').onclick = async () => {
+            const name = document.getElementById('regName').value.trim();
+            const user = document.getElementById('regUser').value.trim().toLowerCase();
+            const pass = document.getElementById('regPass').value.trim();
+
+            if(!name || !user || !pass) return alert("Fill all fields.");
+
+            try {
+                const res = await fetch(`${API_URL}/auth/signup`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username: user, password: pass, email: name })
+                });
+                const result = await res.json();
+                if(result.success) {
+                    alert("Account Created! Use Login to enter.");
+                    btns[0].click();
+                } else { alert("Error: " + result.error); }
+            } catch (err) { alert("Registration Failed."); }
+        };
     </script>
 </body>
 </html>
