@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Inbox | Paradox Mail</title>
     <link rel="icon" type="image/png" href="icon.png">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;800&display=swap');
         body { background: #05070a; font-family: 'Plus Jakarta Sans', sans-serif; color: #ffffff; }
@@ -15,6 +17,9 @@
         .unread-indicator { width: 10px; height: 10px; background: #3b82f6; border-radius: 50%; box-shadow: 0 0 15px #3b82f6; }
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+        
+        .status-pulse { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
     </style>
 </head>
 <body class="flex flex-col h-screen">
@@ -42,17 +47,21 @@
             <div class="flex justify-between items-center mb-12">
                 <h2 class="text-4xl font-black italic uppercase tracking-tighter">Incoming <span class="text-blue-600">Secure</span></h2>
                 <div class="text-[9px] text-gray-500 font-black uppercase tracking-[0.2em] bg-white/5 px-5 py-2 rounded-full border border-white/5">
-                    Cloud Sync: <span id="syncTime" class="text-blue-500">Updating...</span>
+                    Cloud Sync: <span id="syncTime" class="text-blue-500 status-pulse italic">Connecting...</span>
                 </div>
             </div>
 
             <div id="mailList" class="space-y-4 max-w-5xl mx-auto">
+                <div class="animate-pulse space-y-4">
+                    <div class="h-24 bg-white/5 rounded-[2rem]"></div>
+                    <div class="h-24 bg-white/5 rounded-[2rem]"></div>
                 </div>
+            </div>
 
             <div id="emptyView" class="hidden py-32 flex flex-col items-center justify-center text-center opacity-40">
-                <i class="fas fa-ghost text-6xl mb-6"></i>
+                <i class="fas fa-ghost text-6xl mb-6 text-blue-500/50"></i>
                 <h3 class="text-xl font-bold uppercase italic tracking-widest">Inbox Zero</h3>
-                <p class="text-xs font-medium mt-2">No encrypted transmissions found.</p>
+                <p class="text-xs font-medium mt-2">No encrypted transmissions found in Paradox Core.</p>
             </div>
         </section>
     </main>
@@ -72,11 +81,12 @@
             const syncTime = document.getElementById('syncTime');
 
             try {
-                // Bilal Bhai: Check karein backend route '/auth/get-mails' hai ya sirf '/get-mails'
+                // Bilal Bhai: /auth/get-mails wala route use ho raha hai jo pichle step mein backend mein add kiya tha
                 const res = await fetch(`${API_URL}/auth/get-mails?user=${userData.user.toLowerCase()}`);
                 const result = await res.json();
 
                 syncTime.innerText = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                syncTime.classList.remove('status-pulse');
 
                 if (!result.success || !result.data || result.data.length === 0) {
                     container.innerHTML = "";
@@ -90,25 +100,34 @@
                 result.data.forEach(mail => {
                     const card = document.createElement('div');
                     card.className = "glass-card p-6 flex items-center justify-between gap-5 group";
+                    
+                    // Logic to check if sender is official or user
+                    const isOfficial = mail.sender.toLowerCase() === 'official' || mail.sender.toLowerCase() === 'admin';
+                    
                     card.innerHTML = `
                         <div class="flex items-center gap-5 flex-1 min-w-0">
-                            <div class="w-14 h-14 rounded-2xl bg-blue-600/10 text-blue-500 flex items-center justify-center text-xl border border-blue-500/10">
-                                <i class="fas ${mail.sender === 'Official' ? 'fa-shield-alt' : 'fa-user-secret'}"></i>
+                            <div class="w-14 h-14 rounded-2xl ${isOfficial ? 'bg-blue-600/10 text-blue-500 border-blue-500/30' : 'bg-white/5 text-gray-500 border-white/5'} flex items-center justify-center text-xl border">
+                                <i class="fas ${isOfficial ? 'fa-shield-alt' : 'fa-user-secret'}"></i>
                             </div>
                             <div class="min-w-0">
                                 <h4 class="font-black text-sm italic uppercase tracking-tighter flex items-center gap-2">
                                     ${mail.sender} 
-                                    <span class="text-[9px] text-blue-500/60 font-bold tracking-widest">@PARADOX.PK</span>
+                                    ${isOfficial ? '<i class="fas fa-check-circle text-[10px] text-blue-500"></i>' : ''}
+                                    <span class="text-[9px] text-blue-500/40 font-bold tracking-widest">@PARADOX.PK</span>
                                 </h4>
                                 <p class="text-xs font-bold text-gray-200 truncate mt-1">${mail.subject || 'Secure Transmission'}</p>
-                                <p class="text-[10px] text-gray-500 truncate mt-0.5 opacity-60">${mail.message}</p>
+                                <p class="text-[10px] text-gray-500 truncate mt-0.5 opacity-60 italic">${mail.message.substring(0, 60)}...</p>
                             </div>
                         </div>
                         <div class="flex flex-col items-end gap-2">
-                            <span class="text-[9px] font-black text-gray-700 uppercase tracking-widest italic">Received</span>
-                            <i class="fas fa-arrow-right text-gray-800 group-hover:text-blue-500 transition"></i>
+                            <span class="text-[8px] font-black text-gray-700 uppercase tracking-[0.2em] italic">Encrypted</span>
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center bg-white/5 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                                <i class="fas fa-chevron-right text-[10px]"></i>
+                            </div>
                         </div>
                     `;
+                    
+                    // Email view link fix
                     card.onclick = () => window.location.href = `view-mail.html?id=${mail.id}`;
                     container.appendChild(card);
                 });
@@ -116,7 +135,7 @@
             } catch (err) {
                 console.error("Sync Failure:", err);
                 syncTime.innerText = "OFFLINE";
-                syncTime.className = "text-red-500";
+                syncTime.className = "text-red-500 status-pulse font-black";
             }
         }
 
@@ -125,8 +144,10 @@
             window.location.href = "auth-gateway.html";
         };
 
+        // Initial Load
         loadMessages();
-        setInterval(loadMessages, 15000); // 15s refresh
+        // Har 15 seconds baad background update
+        setInterval(loadMessages, 15000); 
     </script>
 </body>
 </html>
