@@ -5,166 +5,139 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Master Control | Paradox Studio</title>
     <link rel="icon" type="image/png" href="icon.png">
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;800&display=swap');
-        body { background: #010409; font-family: 'Plus Jakarta Sans', sans-serif; color: white; overflow-x: hidden; }
+        body { background: #010409; font-family: 'Plus Jakarta Sans', sans-serif; color: white; }
         .glass { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 24px; }
-        .sidebar-link { transition: 0.3s; cursor: pointer; border-radius: 12px; }
+        .sidebar-link { transition: 0.3s; cursor: pointer; border-radius: 12px; color: #64748b; }
         .sidebar-link:hover, .sidebar-link.active { background: rgba(37, 99, 235, 0.1); color: #3b82f6; }
-        .section-hidden { display: none; }
-        
-        /* Custom Scrollbar for sleek look */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
-
-        .status-pulse { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; display: inline-block; box-shadow: 0 0 10px #22c55e; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+        .section-hidden { display: none !important; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
     </style>
 </head>
 <body class="flex min-h-screen">
 
     <aside class="w-72 border-r border-white/5 p-6 flex flex-col gap-8 sticky top-0 h-screen bg-[#010409]">
         <div class="flex items-center gap-3">
-            <img src="icon.png" class="w-10 h-10 rounded-xl shadow-lg shadow-blue-500/20">
-            <h1 class="text-xl font-black uppercase italic tracking-tighter">Master <span class="text-blue-500">Admin</span></h1>
+            <img src="icon.png" class="w-10 h-10 rounded-xl shadow-lg">
+            <h1 class="text-xl font-black uppercase italic">Master <span class="text-blue-500">Admin</span></h1>
         </div>
 
-        <div class="glass p-5 border border-blue-500/20">
+        <div class="glass p-5 border border-blue-500/20 text-center">
             <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Total Network Users</p>
-            <h3 id="totalUserCount" class="text-4xl font-black text-blue-500 italic">--</h3>
-            <div class="flex items-center gap-2 mt-2">
-                <span class="status-pulse"></span>
-                <span class="text-[9px] text-gray-500 uppercase font-bold tracking-tighter">Live Sync Active</span>
-            </div>
+            <h3 id="totalUserCount" class="text-3xl font-black text-blue-500 italic">--</h3>
+            <p id="syncStatus" class="text-[8px] text-gray-600 mt-2 uppercase">Standby</p>
         </div>
 
-        <nav class="flex flex-col gap-2 font-bold text-sm text-gray-400">
-            <div onclick="showSection('userDatabase')" class="sidebar-link active p-4 flex items-center gap-3">
+        <nav class="flex flex-col gap-2 font-bold text-sm">
+            <div onclick="showSection('userDatabase', this)" class="sidebar-link active p-4 flex items-center gap-3">
                 <i class="fas fa-users"></i> User Database
             </div>
-            <div onclick="showSection('vipRequests')" class="sidebar-link p-4 flex items-center gap-3">
-                <i class="fas fa-crown"></i> VIP Requests
-            </div>
-            <div onclick="showSection('sendMail')" class="sidebar-link p-4 flex items-center gap-3">
+            <div onclick="showSection('sendMail', this)" class="sidebar-link p-4 flex items-center gap-3">
                 <i class="fas fa-paper-plane"></i> Official Mail
             </div>
-            <div onclick="showSection('quickTools')" class="sidebar-link p-4 flex items-center gap-3">
-                <i class="fas fa-tools"></i> Quick Tools
-            </div>
         </nav>
-
-        <div class="mt-auto p-4 glass text-center border-t border-blue-500/20">
-            <p id="timer" class="text-lg font-bold text-blue-500 tracking-widest">00:00:00</p>
-            <p class="text-[9px] text-gray-600 uppercase font-bold">Paradox OS v4.0</p>
-        </div>
     </aside>
 
-    <main class="flex-1 p-10 bg-gradient-to-br from-[#010409] to-[#0d1117]">
-
+    <main class="flex-1 p-10">
         <section id="userDatabase" class="space-y-6">
-            <div class="flex justify-between items-end">
-                <div>
-                    <h2 class="text-3xl font-black uppercase italic text-blue-500">User Management</h2>
-                    <p class="text-gray-500 text-xs font-bold uppercase mt-1">Realtime database synchronization</p>
-                </div>
-                <button onclick="fetchUsers()" class="p-3 bg-white/5 rounded-xl hover:bg-white/10 transition text-blue-400"><i class="fas fa-sync-alt"></i></button>
+            <div class="flex justify-between items-center">
+                <h2 class="text-3xl font-black uppercase italic text-blue-500">User Management</h2>
+                <button onclick="fetchUsers()" class="px-4 py-2 bg-blue-600/10 text-blue-500 rounded-lg text-xs font-bold border border-blue-500/20 hover:bg-blue-600/20">FORCE REFRESH</button>
             </div>
             
-            <div class="glass p-8 overflow-hidden">
+            <div class="glass p-8">
                 <table class="w-full text-left text-sm">
                     <thead class="text-[10px] text-gray-500 uppercase border-b border-white/5">
                         <tr>
-                            <th class="pb-4">Paradox Identity</th>
-                            <th class="pb-4">System Rank</th>
-                            <th class="pb-4">Status</th>
-                            <th class="pb-4 text-right">Action</th>
+                            <th class="pb-4">Username</th>
+                            <th class="pb-4">Rank</th>
+                            <th class="pb-4">Created At</th>
+                            <th class="pb-4 text-right">Status</th>
                         </tr>
                     </thead>
                     <tbody id="userListBody">
-                        </tbody>
+                        <tr><td colspan="4" class="py-10 text-center text-gray-600">Syncing with Paradox Cloud...</td></tr>
+                    </tbody>
                 </table>
             </div>
         </section>
 
-        <section id="vipRequests" class="section-hidden space-y-6">
-            <h2 class="text-3xl font-black uppercase italic text-yellow-500">VIP Requests</h2>
-            </section>
-
+        <section id="sendMail" class="section-hidden space-y-6">
+             <h2 class="text-3xl font-black uppercase italic text-gray-300">Official Announcement</h2>
+             </section>
     </main>
 
-    <script type="module">
+    <script>
+        // BILAL BHAI: Check karein agar API URL bilkul sahi hai
         const API_URL = "https://elitegamer859650-pauthservice.hf.space";
 
-        // Navigation Logic
-        window.showSection = (sectionId) => {
-            document.querySelectorAll('main > section').forEach(s => s.classList.add('section-hidden'));
-            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
-            
-            document.getElementById(sectionId).classList.remove('section-hidden');
-            event.currentTarget.classList.add('active');
-        };
-
-        // --- 🛰️ REALTIME FETCH USERS ---
         async function fetchUsers() {
             const body = document.getElementById('userListBody');
             const counter = document.getElementById('totalUserCount');
+            const syncStatus = document.getElementById('syncStatus');
+
+            syncStatus.innerText = "Syncing...";
             
             try {
-                const res = await fetch(`${API_URL}/auth/admin/users`);
-                const result = await res.json();
+                // Direct fetch call
+                const response = await fetch(`${API_URL}/auth/admin/users`);
                 
-                if(result.success) {
-                    // Update Total Count
-                    counter.innerText = result.data.length;
-                    
-                    // Clear and Update List
+                if (!response.ok) throw new Error('Network response was not ok');
+                
+                const result = await response.json();
+                console.log("Paradox Debug Data:", result); // F12 mein check karein naya data
+
+                // Check karein ke data array hai ya kuch aur
+                let users = [];
+                if (Array.isArray(result)) users = result;
+                else if (result.data && Array.isArray(result.data)) users = result.data;
+                else if (result.users && Array.isArray(result.users)) users = result.users;
+
+                if (users.length > 0) {
+                    counter.innerText = users.length;
                     body.innerHTML = "";
-                    result.data.reverse().forEach(u => {
+                    users.reverse().forEach(u => {
                         body.innerHTML += `
                             <tr class="border-b border-white/5 hover:bg-white/[0.02] transition">
-                                <td class="py-4 font-bold text-blue-400 italic">@${u.username}</td>
+                                <td class="py-4 font-bold text-blue-400">@${u.username || u.user || 'Unknown'}</td>
                                 <td class="py-4">
-                                    <span class="px-3 py-1 rounded-full text-[9px] ${u.rank === 'VIP' ? 'bg-yellow-500/10 text-yellow-500' : 'bg-blue-500/10 text-blue-500'} border border-current font-black uppercase">
-                                        ${u.rank || 'Standard'}
+                                    <span class="px-2 py-1 rounded bg-white/5 text-[9px] font-bold uppercase border border-white/10">
+                                        ${u.rank || u.role || 'Standard'}
                                     </span>
                                 </td>
-                                <td class="py-4"><span class="text-green-500 text-[10px] font-bold uppercase tracking-widest">Online</span></td>
-                                <td class="py-4 text-right">
-                                    <button onclick="deleteUser('${u.username}')" class="w-8 h-8 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition shadow-lg shadow-red-500/5">
-                                        <i class="fas fa-trash text-xs"></i>
-                                    </button>
-                                </td>
+                                <td class="py-4 text-gray-600 text-[10px]">${u.createdAt || 'N/A'}</td>
+                                <td class="py-4 text-right"><span class="status-dot bg-green-500"></span></td>
                             </tr>
                         `;
                     });
+                    syncStatus.innerText = "Cloud Synced";
+                } else {
+                    body.innerHTML = '<tr><td colspan="4" class="py-10 text-center text-red-500/50">No users found in database.</td></tr>';
+                    counter.innerText = "0";
                 }
-            } catch (e) { 
-                console.error("Connection Interrupted");
+
+            } catch (error) {
+                console.error("Critical Sync Error:", error);
+                body.innerHTML = `<tr><td colspan="4" class="py-10 text-center text-red-500 italic">Connection Failed: ${error.message}</td></tr>`;
+                syncStatus.innerText = "Offline";
                 counter.innerText = "ERR";
             }
         }
 
-        // Live Clock
-        setInterval(() => { 
-            document.getElementById('timer').innerText = new Date().toLocaleTimeString('en-GB'); 
-        }, 1000);
-
-        // --- 🔄 AUTO-SYNC LOGIC (Har 5 seconds baad refresh) ---
-        fetchUsers(); // Pehli baar load karne ke liye
-        setInterval(fetchUsers, 5000); // Har 5 seconds baad background mein update
-
-        // Global functions for inline onclicks
-        window.deleteUser = async (username) => {
-            if(!confirm(`Permanent wipe @${username}?`)) return;
-            // Add your delete logic here
-            alert("Administrative Action: User Wiped");
-            fetchUsers();
+        window.showSection = (sectionId, el) => {
+            document.querySelectorAll('main > section').forEach(s => s.classList.add('section-hidden'));
+            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+            document.getElementById(sectionId).classList.remove('section-hidden');
+            el.classList.add('active');
         };
 
+        // Initial fetch
+        fetchUsers();
+        // Har 15 seconds baad auto-refresh
+        setInterval(fetchUsers, 15000);
     </script>
 </body>
 </html>
