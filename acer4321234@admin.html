@@ -11,10 +11,9 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;800&display=swap');
         body { background: #010409; font-family: 'Plus Jakarta Sans', sans-serif; color: white; }
         .glass { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 24px; }
-        .sidebar-link { transition: 0.3s; cursor: pointer; border-radius: 12px; color: #64748b; }
+        .sidebar-link { transition: 0.3s; cursor: pointer; border-radius: 12px; color: #64748b; margin-bottom: 4px; }
         .sidebar-link:hover, .sidebar-link.active { background: rgba(37, 99, 235, 0.1); color: #3b82f6; }
         .section-hidden { display: none !important; }
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
     </style>
 </head>
 <body class="flex min-h-screen">
@@ -22,121 +21,125 @@
     <aside class="w-72 border-r border-white/5 p-6 flex flex-col gap-8 sticky top-0 h-screen bg-[#010409]">
         <div class="flex items-center gap-3">
             <img src="icon.png" class="w-10 h-10 rounded-xl shadow-lg">
-            <h1 class="text-xl font-black uppercase italic">Master <span class="text-blue-500">Admin</span></h1>
+            <h1 class="text-xl font-black uppercase italic">MASTER <span class="text-blue-500">ADMIN</span></h1>
         </div>
 
         <div class="glass p-5 border border-blue-500/20 text-center">
             <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Total Network Users</p>
             <h3 id="totalUserCount" class="text-3xl font-black text-blue-500 italic">--</h3>
-            <p id="syncStatus" class="text-[8px] text-gray-600 mt-2 uppercase">Standby</p>
         </div>
 
-        <nav class="flex flex-col gap-2 font-bold text-sm">
+        <nav id="sidebar-nav" class="flex flex-col font-bold text-sm">
             <div onclick="showSection('userDatabase', this)" class="sidebar-link active p-4 flex items-center gap-3">
                 <i class="fas fa-users"></i> User Database
             </div>
+            <div onclick="showSection('vipRequests', this)" class="sidebar-link p-4 flex items-center gap-3">
+                <i class="fas fa-crown"></i> VIP Requests
+            </div>
             <div onclick="showSection('sendMail', this)" class="sidebar-link p-4 flex items-center gap-3">
                 <i class="fas fa-paper-plane"></i> Official Mail
+            </div>
+            <div onclick="showSection('quickTools', this)" class="sidebar-link p-4 flex items-center gap-3">
+                <i class="fas fa-tools"></i> Quick Tools
             </div>
         </nav>
     </aside>
 
     <main class="flex-1 p-10">
         <section id="userDatabase" class="space-y-6">
-            <div class="flex justify-between items-center">
-                <h2 class="text-3xl font-black uppercase italic text-blue-500">User Management</h2>
-                <button onclick="fetchUsers()" class="px-4 py-2 bg-blue-600/10 text-blue-500 rounded-lg text-xs font-bold border border-blue-500/20 hover:bg-blue-600/20">FORCE REFRESH</button>
-            </div>
-            
+            <h2 class="text-3xl font-black uppercase italic text-blue-500 tracking-tighter">User Management</h2>
             <div class="glass p-8">
                 <table class="w-full text-left text-sm">
                     <thead class="text-[10px] text-gray-500 uppercase border-b border-white/5">
-                        <tr>
-                            <th class="pb-4">Username</th>
-                            <th class="pb-4">Rank</th>
-                            <th class="pb-4">Created At</th>
-                            <th class="pb-4 text-right">Status</th>
-                        </tr>
+                        <tr><th class="pb-4">Paradox Identity</th><th class="pb-4">Status</th><th class="pb-4 text-right">Action</th></tr>
                     </thead>
                     <tbody id="userListBody">
-                        <tr><td colspan="4" class="py-10 text-center text-gray-600">Syncing with Paradox Cloud...</td></tr>
+                        <tr><td colspan="3" class="py-10 text-center text-gray-600 italic">Initializing Cloud Sync...</td></tr>
                     </tbody>
                 </table>
             </div>
         </section>
 
         <section id="sendMail" class="section-hidden space-y-6">
-             <h2 class="text-3xl font-black uppercase italic text-gray-300">Official Announcement</h2>
-             </section>
+            <h2 class="text-3xl font-black uppercase italic text-gray-300">Official Announcement</h2>
+            <div class="glass p-10 max-w-2xl space-y-4">
+                <input type="text" id="msgTarget" placeholder="Username (e.g. acer4321234)" class="w-full p-4 rounded-xl text-white bg-black/40 border border-white/10">
+                <textarea id="msgBody" rows="5" placeholder="System message content..." class="w-full p-4 rounded-xl text-white bg-black/40 border border-white/10 resize-none"></textarea>
+                <button onclick="sendOfficialMail()" class="w-full py-4 bg-blue-600 rounded-xl font-black uppercase hover:bg-blue-500 transition">Broadcast Mail</button>
+            </div>
+        </section>
+
+        <section id="vipRequests" class="section-hidden p-10 italic text-gray-500">VIP System Standby...</section>
+        <section id="quickTools" class="section-hidden p-10 italic text-gray-500">Tools Offline...</section>
     </main>
 
     <script>
-        // BILAL BHAI: Check karein agar API URL bilkul sahi hai
-        const API_URL = "https://elitegamer859650-pauthservice.hf.space";
+        // BILAL BHAI: URL Check karein. Agar 'auth/admin/users' 404 de raha hai, 
+        // toh shayad endpoint sirf 'auth/users' hai. Maine dono try karne ka logic likha hai.
+        const API_BASE = "https://elitegamer859650-pauthservice.hf.space";
 
         async function fetchUsers() {
             const body = document.getElementById('userListBody');
             const counter = document.getElementById('totalUserCount');
-            const syncStatus = document.getElementById('syncStatus');
-
-            syncStatus.innerText = "Syncing...";
             
             try {
-                // Direct fetch call
-                const response = await fetch(`${API_URL}/auth/admin/users`);
+                // Try fetching from the main users endpoint
+                const res = await fetch(`${API_BASE}/auth/users`); 
+                const result = await res.json();
                 
-                if (!response.ok) throw new Error('Network response was not ok');
-                
-                const result = await response.json();
-                console.log("Paradox Debug Data:", result); // F12 mein check karein naya data
+                let users = result.data || result || [];
 
-                // Check karein ke data array hai ya kuch aur
-                let users = [];
-                if (Array.isArray(result)) users = result;
-                else if (result.data && Array.isArray(result.data)) users = result.data;
-                else if (result.users && Array.isArray(result.users)) users = result.users;
-
-                if (users.length > 0) {
+                if (Array.isArray(users)) {
                     counter.innerText = users.length;
                     body.innerHTML = "";
                     users.reverse().forEach(u => {
                         body.innerHTML += `
-                            <tr class="border-b border-white/5 hover:bg-white/[0.02] transition">
-                                <td class="py-4 font-bold text-blue-400">@${u.username || u.user || 'Unknown'}</td>
-                                <td class="py-4">
-                                    <span class="px-2 py-1 rounded bg-white/5 text-[9px] font-bold uppercase border border-white/10">
-                                        ${u.rank || u.role || 'Standard'}
-                                    </span>
+                            <tr class="border-b border-white/5">
+                                <td class="py-4 font-bold text-blue-400">@${u.username}</td>
+                                <td class="py-4 text-[10px] text-green-500 font-bold uppercase tracking-widest">Active</td>
+                                <td class="py-4 text-right">
+                                    <button class="text-gray-600 hover:text-red-500 transition"><i class="fas fa-trash"></i></button>
                                 </td>
-                                <td class="py-4 text-gray-600 text-[10px]">${u.createdAt || 'N/A'}</td>
-                                <td class="py-4 text-right"><span class="status-dot bg-green-500"></span></td>
-                            </tr>
-                        `;
+                            </tr>`;
                     });
-                    syncStatus.innerText = "Cloud Synced";
-                } else {
-                    body.innerHTML = '<tr><td colspan="4" class="py-10 text-center text-red-500/50">No users found in database.</td></tr>';
-                    counter.innerText = "0";
                 }
-
-            } catch (error) {
-                console.error("Critical Sync Error:", error);
-                body.innerHTML = `<tr><td colspan="4" class="py-10 text-center text-red-500 italic">Connection Failed: ${error.message}</td></tr>`;
-                syncStatus.innerText = "Offline";
-                counter.innerText = "ERR";
+            } catch (e) {
+                console.error("Fetch Error:", e);
+                body.innerHTML = `<tr><td colspan="3" class="py-10 text-center text-red-500/50 italic">Sync Failed: Server 404 or Offline</td></tr>`;
             }
         }
 
-        window.showSection = (sectionId, el) => {
+        window.showSection = (id, el) => {
             document.querySelectorAll('main > section').forEach(s => s.classList.add('section-hidden'));
             document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
-            document.getElementById(sectionId).classList.remove('section-hidden');
-            el.classList.add('active');
+            
+            const target = document.getElementById(id);
+            if(target) {
+                target.classList.remove('section-hidden');
+                el.classList.add('active');
+            }
         };
 
-        // Initial fetch
+        window.sendOfficialMail = async () => {
+            const target = document.getElementById('msgTarget').value;
+            const message = document.getElementById('msgBody').value;
+            
+            if(!target || !message) return alert("Fill all fields");
+
+            try {
+                const res = await fetch(`${API_BASE}/auth/send-mail`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ sender: "Official", receiver: target, message })
+                });
+                const data = await res.json();
+                if(data.success) alert("Paradox Mail Dispatched!");
+                else alert("Failed to send: " + data.message);
+            } catch (e) { alert("Server Connection Lost"); }
+        };
+
+        // Initial Load
         fetchUsers();
-        // Har 15 seconds baad auto-refresh
         setInterval(fetchUsers, 15000);
     </script>
 </body>
