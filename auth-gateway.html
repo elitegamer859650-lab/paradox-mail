@@ -4,135 +4,196 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Paradox Gateway | Secure Access</title>
+    
+    <link rel="icon" type="image/png" href="icon.png?v=4.0">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;800&display=swap');
-        body { background: #05070a; font-family: 'Plus Jakarta Sans', sans-serif; color: white; }
-        .glass-box { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 32px; }
-        .input-style { background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); outline: none; transition: 0.3s; }
-        .input-style:focus { border-color: #3b82f6; background: rgba(59, 130, 246, 0.05); }
-        .tab-btn { padding: 12px; font-size: 13px; font-weight: 700; color: #64748b; transition: 0.3s; border-bottom: 2px solid transparent; }
+        
+        body { 
+            background: #05070a; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            color: white; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* 🌑 DARK GLASSMORPHISM */
+        .glass-box { 
+            background: rgba(255, 255, 255, 0.02); 
+            backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            border-radius: 40px; 
+            padding: 3.5rem 2.5rem;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.5);
+        }
+
+        .input-style { 
+            background: rgba(0, 0, 0, 0.4); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            outline: none; 
+            transition: 0.3s; 
+            width: 100%;
+            padding: 1.25rem;
+            border-radius: 20px;
+            color: white;
+            font-size: 0.875rem;
+        }
+
+        .input-style:focus { 
+            border-color: #3b82f6; 
+            background: rgba(59, 130, 246, 0.05); 
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
+        }
+
+        .tab-btn { 
+            padding: 12px; 
+            font-size: 13px; 
+            font-weight: 700; 
+            color: #64748b; 
+            transition: 0.3s; 
+            border-bottom: 2px solid transparent; 
+            flex: 1;
+        }
+
         .tab-btn.active { color: #3b82f6; border-bottom-color: #3b82f6; }
         .vip-tab.active { color: #eab308; border-bottom-color: #eab308; }
+        
         .hidden { display: none; }
+
+        .btn-glow {
+            transition: 0.4s;
+            box-shadow: 0 10px 30px -10px rgba(59, 130, 246, 0.4);
+        }
+        .btn-glow:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px -10px rgba(59, 130, 246, 0.6);
+        }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-6">
+<body>
 
-    <div class="glass-box w-full max-w-md p-10 shadow-2xl">
-        <div class="text-center mb-8">
-            <img src="icon.png" class="w-16 h-16 mx-auto rounded-2xl mb-4 shadow-lg shadow-blue-500/10">
-            <h1 class="text-2xl font-extrabold tracking-tight">Paradox <span class="text-blue-500">Mail</span></h1>
-            <p class="text-[11px] text-gray-500 font-medium uppercase tracking-widest mt-1">Powered by Paradox Cloud</p>
+    <div class="glass-box">
+        <div class="text-center mb-10">
+            <img src="icon.png" class="w-16 h-16 mx-auto rounded-2xl mb-4 shadow-2xl shadow-blue-500/20">
+            <h1 class="text-2xl font-extrabold tracking-tight italic uppercase">Paradox <span class="text-blue-600">Mail</span></h1>
+            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-[0.2em] mt-2">Global Infrastructure Gateway</p>
         </div>
 
-        <div class="flex mb-8 border-b border-white/5">
-            <button id="showLogin" class="tab-btn active flex-1">Login</button>
-            <button id="showRegister" class="tab-btn flex-1">Sign Up</button>
-            <button id="showVip" class="tab-btn flex-1 text-yellow-600">Get VIP</button>
+        <div class="flex mb-10 border-b border-white/5">
+            <button id="showLogin" class="tab-btn active">Login</button>
+            <button id="showRegister" class="tab-btn">Sign Up</button>
+            <button id="showVip" class="tab-btn text-yellow-600">Get VIP</button>
         </div>
 
         <div id="loginSection" class="space-y-4">
             <div class="relative">
-                <input type="text" id="loginUser" placeholder="Username" class="input-style w-full p-4 rounded-2xl text-sm">
-                <span class="absolute right-4 top-4 text-[10px] text-gray-600 font-bold">@paradox.pk</span>
+                <input type="text" id="loginUser" placeholder="Username" class="input-style">
+                <span class="absolute right-5 top-5 text-[10px] text-gray-600 font-bold uppercase">@paradox.pk</span>
             </div>
-            <input type="password" id="loginPass" placeholder="Password" class="input-style w-full p-4 rounded-2xl text-sm">
-            <button id="doLogin" class="w-full py-4 bg-blue-600 hover:bg-blue-500 rounded-2xl font-bold text-sm transition shadow-lg shadow-blue-600/20">Login to Inbox</button>
+            <input type="password" id="loginPass" placeholder="Password" class="input-style">
+            <button id="doLogin" class="w-full py-4 bg-blue-600 hover:bg-blue-500 rounded-2xl font-bold text-sm transition btn-glow">Verify Identity</button>
         </div>
 
         <div id="registerSection" class="space-y-4 hidden">
-            <input type="text" id="regName" placeholder="Your Full Name" class="input-style w-full p-4 rounded-2xl text-sm">
+            <input type="text" id="regName" placeholder="Full Name" class="input-style">
             <div class="relative">
-                <input type="text" id="regUser" placeholder="Choose Username" class="input-style w-full p-4 rounded-2xl text-sm lowercase">
-                <span class="absolute right-4 top-4 text-[10px] text-blue-500 font-bold">@paradox.pk</span>
+                <input type="text" id="regUser" placeholder="Username" class="input-style lowercase">
+                <span class="absolute right-5 top-5 text-[10px] text-blue-500 font-bold uppercase">@paradox.pk</span>
             </div>
-            <input type="password" id="regPass" placeholder="Create Password" class="input-style w-full p-4 rounded-2xl text-sm">
-            <button id="doRegister" class="w-full py-4 bg-white text-black hover:bg-gray-200 rounded-2xl font-bold text-sm transition">Create Account</button>
+            <input type="password" id="regPass" placeholder="Password" class="input-style">
+            <button id="doRegister" class="w-full py-4 bg-white text-black hover:bg-gray-200 rounded-2xl font-bold text-sm transition">Establish Identity</button>
         </div>
 
         <div id="vipSection" class="space-y-4 hidden text-center">
             <div class="bg-yellow-500/5 p-6 rounded-3xl border border-yellow-500/10 mb-6">
-                <p class="text-xs text-yellow-500 font-bold uppercase tracking-widest">EasyPaisa Payment</p>
+                <p class="text-[10px] text-yellow-500 font-bold uppercase tracking-widest">EasyPaisa Hub</p>
                 <h3 class="text-2xl font-black mt-2 text-white">+92 313 5583959</h3>
-                <p class="text-[10px] text-gray-500 mt-2 italic">Fee: 500 PKR (Lifetime VIP)</p>
+                <p class="text-[10px] text-gray-500 mt-2 italic">Fee: 500 PKR (Lifetime Access)</p>
             </div>
-            <input type="text" id="vipUser" placeholder="Your Paradox Username" class="input-style w-full p-4 rounded-2xl text-sm">
-            <input type="email" id="vipGmail" placeholder="Your Gmail (for info)" class="input-style w-full p-4 rounded-2xl text-sm">
-            <input type="text" id="vipTrx" placeholder="Transaction ID (TRX)" class="input-style w-full p-4 rounded-2xl text-sm border-yellow-500/20">
-            <button id="doVip" class="w-full py-4 bg-yellow-600 text-black hover:bg-yellow-500 rounded-2xl font-bold text-sm transition">Submit VIP Request</button>
+            <input type="text" id="vipUser" placeholder="Paradox Username" class="input-style">
+            <input type="text" id="vipTrx" placeholder="Transaction ID (TRX)" class="input-style border-yellow-500/20">
+            <button id="doVip" class="w-full py-4 bg-yellow-600 text-black hover:bg-yellow-500 rounded-2xl font-bold text-sm transition">Submit Request</button>
         </div>
+
+        <p class="text-center text-[9px] text-gray-600 mt-10 uppercase font-black tracking-widest">© 2026 Paradox Cloud Nodes</p>
     </div>
 
-    <script type="module">
-        // 💠 Paradox Engine Configuration
+    
+
+    <script>
         const API_URL = "https://elitegamer859650-pauthservice.hf.space";
 
-        const buttons = [document.getElementById('showLogin'), document.getElementById('showRegister'), document.getElementById('showVip')];
-        const sections = [document.getElementById('loginSection'), document.getElementById('registerSection'), document.getElementById('vipSection')];
+        const btns = [document.getElementById('showLogin'), document.getElementById('showRegister'), document.getElementById('showVip')];
+        const secs = [document.getElementById('loginSection'), document.getElementById('registerSection'), document.getElementById('vipSection')];
 
-        // Tab Switching Logic
-        buttons.forEach((btn, index) => {
+        btns.forEach((btn, i) => {
             btn.onclick = () => {
-                buttons.forEach(b => b.classList.remove('active', 'vip-tab'));
-                sections.forEach(s => s.classList.add('hidden'));
+                btns.forEach(b => b.classList.remove('active', 'vip-tab'));
+                secs.forEach(s => s.classList.add('hidden'));
                 btn.classList.add('active');
-                if(index === 2) btn.classList.add('vip-tab');
-                sections[index].classList.remove('hidden');
+                if(i === 2) btn.classList.add('vip-tab');
+                secs[i].classList.remove('hidden');
             };
         });
 
-        // 1. REGISTER LOGIC (Using Paradox Cloud)
+        // 🛡️ LOGIN LOGIC
+        document.getElementById('doLogin').onclick = async () => {
+            const user = document.getElementById('loginUser').value.trim().toLowerCase();
+            const pass = document.getElementById('loginPass').value.trim();
+            const btn = document.getElementById('doLogin');
+
+            if(!user || !pass) return alert("Credentials required.");
+            btn.innerText = "Verifying Identity...";
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(`${API_URL}/auth/login`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username: user, password: pass })
+                });
+                const result = await res.json();
+                if(result.success) {
+                    localStorage.setItem('paradox_active_session', JSON.stringify(result.data));
+                    window.location.href = "home.html";
+                } else {
+                    alert("Error: " + result.error);
+                }
+            } catch (err) { alert("Cloud Connectivity Failed."); }
+            btn.innerText = "Verify Identity";
+            btn.disabled = false;
+        };
+
+        // 📝 REGISTER LOGIC
         document.getElementById('doRegister').onclick = async () => {
             const name = document.getElementById('regName').value.trim();
             const user = document.getElementById('regUser').value.trim().toLowerCase();
             const pass = document.getElementById('regPass').value.trim();
 
-            if(!name || !user || !pass) return alert("All fields required.");
+            if(!name || !user || !pass) return alert("Fill all fields.");
 
             try {
                 const res = await fetch(`${API_URL}/auth/signup`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ username: user, password: pass, email: name }) // email ki jagah name bhej rahe hain for profiles
+                    body: JSON.stringify({ username: user, password: pass, email: name })
                 });
                 const result = await res.json();
-                
                 if(result.success) {
-                    alert("Account Created in Paradox Cloud!");
-                    buttons[0].click();
-                } else {
-                    alert("Error: " + result.error);
-                }
-            } catch (err) {
-                alert("Cloud Connection Failed.");
-            }
-        };
-
-        // 2. LOGIN LOGIC (Testing via Paradox Cloud)
-        document.getElementById('doLogin').onclick = async () => {
-            const user = document.getElementById('loginUser').value.trim().toLowerCase();
-            const pass = document.getElementById('loginPass').value.trim();
-
-            // Note: Make sure to implement /auth/login in your Hugging Face index.js
-            alert("Login logic is being routed through Paradox Cloud...");
-            
-            // For now, simple redirect if successful or simulate check
-            localStorage.setItem('paradox_active_session', JSON.stringify({ user: user }));
-            window.location.href = "inbox.html";
-        };
-
-        // 3. VIP REQUEST (Direct JSON Post)
-        document.getElementById('doVip').onclick = async () => {
-            const user = document.getElementById('vipUser').value.trim();
-            const trx = document.getElementById('vipTrx').value.trim();
-
-            if(!user || !trx) return alert("Fill payment details.");
-            
-            alert("VIP Request received. Admin will verify TRX: " + trx);
-            location.reload();
+                    alert("Account Created! Use Login to enter.");
+                    btns[0].click();
+                } else { alert("Error: " + result.error); }
+            } catch (err) { alert("Registration Failed."); }
         };
     </script>
 </body>
