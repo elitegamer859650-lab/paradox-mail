@@ -14,8 +14,7 @@
         .sidebar-link { transition: 0.3s; cursor: pointer; border-radius: 12px; color: #64748b; margin-bottom: 4px; }
         .sidebar-link:hover, .sidebar-link.active { background: rgba(37, 99, 235, 0.1); color: #3b82f6; }
         .section-hidden { display: none !important; }
-        input, textarea { background: rgba(0, 0, 0, 0.4) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; color: white !important; }
-        .status-pill { padding: 2px 8px; border-radius: 99px; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        .status-pill { padding: 4px 10px; border-radius: 99px; font-size: 9px; font-weight: 800; text-transform: uppercase; }
     </style>
 </head>
 <body class="flex min-h-screen">
@@ -29,8 +28,8 @@
         <div class="glass p-5 border border-blue-500/20">
             <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Total Users</p>
             <h3 id="totalUserCount" class="text-3xl font-black text-blue-500 italic">--</h3>
-            <div id="engine-status" class="mt-2 tracking-tighter">
-                <span class="status-pill bg-blue-500/10 text-blue-500 italic">Syncing Cloud...</span>
+            <div id="engine-status" class="mt-2">
+                <span class="status-pill bg-blue-500/10 text-blue-500 italic">Connecting...</span>
             </div>
         </div>
 
@@ -38,134 +37,81 @@
             <div onclick="showSection('userDatabase', this)" class="sidebar-link active p-4 flex items-center gap-3">
                 <i class="fas fa-users"></i> User Database
             </div>
-            <div onclick="showSection('vipRequests', this)" class="sidebar-link p-4 flex items-center gap-3">
-                <i class="fas fa-crown"></i> VIP Requests
-            </div>
             <div onclick="showSection('sendMail', this)" class="sidebar-link p-4 flex items-center gap-3">
                 <i class="fas fa-paper-plane"></i> Official Mail
-            </div>
-            <div onclick="showSection('quickTools', this)" class="sidebar-link p-4 flex items-center gap-3">
-                <i class="fas fa-tools"></i> Quick Tools
             </div>
         </nav>
     </aside>
 
     <main class="flex-1 p-10">
-
         <section id="userDatabase" class="space-y-6">
-            <h2 class="text-3xl font-black uppercase italic text-blue-500 tracking-tighter">User Management</h2>
+            <div class="flex justify-between items-center">
+                <h2 class="text-3xl font-black uppercase italic text-blue-500">User Management</h2>
+                <button onclick="fetchUsers()" class="px-4 py-2 bg-white/5 rounded-lg text-xs font-bold hover:bg-white/10 transition">RE-SYNC</button>
+            </div>
             <div class="glass p-8">
                 <table class="w-full text-left text-sm">
                     <thead class="text-[10px] text-gray-500 uppercase border-b border-white/5">
-                        <tr><th class="pb-4">Paradox Identity</th><th class="pb-4">Rank</th><th class="pb-4 text-right">Database Sync</th></tr>
+                        <tr><th class="pb-4">Paradox ID</th><th class="pb-4">Status</th><th class="pb-4 text-right">Action</th></tr>
                     </thead>
                     <tbody id="userListBody">
-                        <tr><td colspan="3" class="py-10 text-center text-gray-600 italic">Connecting to Paradox Cloud Engine...</td></tr>
+                        <tr><td colspan="3" class="py-10 text-center text-gray-600 italic">Requesting Database Access...</td></tr>
                     </tbody>
                 </table>
             </div>
         </section>
 
-        <section id="vipRequests" class="section-hidden space-y-6">
-            <h2 class="text-3xl font-black uppercase italic text-yellow-500 tracking-tighter">VIP Payment Requests</h2>
-            <div class="glass p-10 text-center text-gray-600 italic">
-                <i class="fas fa-receipt mb-4 text-4xl opacity-20"></i>
-                <p>No pending VIP verification requests.</p>
-            </div>
-        </section>
-
         <section id="sendMail" class="section-hidden space-y-6">
-            <h2 class="text-3xl font-black uppercase italic text-gray-300 tracking-tighter">Official Announcement</h2>
-            <div class="glass p-10 max-w-2xl space-y-4">
-                <input type="text" id="msgTarget" placeholder="Target Username" class="w-full p-4 rounded-xl text-sm">
-                <textarea id="msgBody" rows="5" placeholder="System message..." class="w-full p-4 rounded-xl text-sm resize-none"></textarea>
-                <button onclick="sendOfficialMail()" class="w-full py-4 bg-blue-600 rounded-xl font-black uppercase hover:bg-blue-500 transition">Broadcast Mail</button>
-            </div>
+             <h2 class="text-3xl font-black uppercase italic text-gray-300">Official Announcement</h2>
+             <div class="glass p-10 max-w-2xl italic text-gray-500">Mail System Ready.</div>
         </section>
-
-        <section id="quickTools" class="section-hidden space-y-6">
-            <h2 class="text-3xl font-black uppercase italic text-red-500 tracking-tighter">System Tools</h2>
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="glass p-8 border border-red-500/10">
-                    <h3 class="font-bold mb-4 uppercase text-red-500 text-xs italic">Account Deletion</h3>
-                    <input type="text" id="delUser" placeholder="Username" class="w-full p-4 rounded-xl text-sm mb-4">
-                    <button class="w-full py-4 bg-red-600 rounded-xl font-black hover:bg-red-800 transition">Wipe Data</button>
-                </div>
-                <div class="glass p-8 border border-yellow-500/10">
-                    <h3 class="font-bold mb-4 uppercase text-yellow-500 text-xs italic">Manual Rank Update</h3>
-                    <input type="text" placeholder="Username" class="w-full p-4 rounded-xl text-sm mb-4">
-                    <button class="w-full py-4 bg-yellow-600/20 text-yellow-500 border border-yellow-500/40 rounded-xl font-black hover:bg-yellow-600 hover:text-black transition">Set VIP Status</button>
-                </div>
-            </div>
-        </section>
-
     </main>
 
     <script>
-        // 💠 CORE DATABASE CONFIG (Sourced from your Screenshot)
-        const API_URL = "https://elitegamer859650-pauthservice.hf.space";
+        // BILAL BHAI: Yahan EXACT URL check karein jo paradox mail mein hai.
+        const API_BASE = "https://elitegamer859650-pauthservice.hf.space";
 
-        // 1. Connection Check (Similar to your auth-gateway logic)
-        async function checkEngine() {
-            const statusBox = document.getElementById('engine-status');
-            try {
-                const res = await fetch(API_URL + "/");
-                if(res.ok) {
-                    statusBox.innerHTML = '<span class="status-pill bg-green-500/10 text-green-500 italic">Cloud Engine Online</span>';
-                }
-            } catch (e) {
-                statusBox.innerHTML = '<span class="status-pill bg-red-500/10 text-red-500 italic">Engine Offline</span>';
-            }
-        }
-
-        // 2. Fetch Users Logic (Targeting the correct endpoint)
         async function fetchUsers() {
             const body = document.getElementById('userListBody');
             const counter = document.getElementById('totalUserCount');
-            
+            const statusBox = document.getElementById('engine-status');
+
             try {
-                // Bilal Bhai: Check karein agar aapka backend users ko '/users' par bhej raha hai
-                const res = await fetch(API_URL + "/auth/users");
+                // Bypass logic: mode cors aur cache no-store lazmi hain
+                const res = await fetch(`${API_BASE}/auth/users`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    cache: 'no-store',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
+
                 const result = await res.json();
-                
                 const users = result.data || result || [];
 
                 if (Array.isArray(users)) {
                     counter.innerText = users.length;
+                    statusBox.innerHTML = '<span class="status-pill bg-green-500/10 text-green-500 italic">Engine Online</span>';
                     body.innerHTML = "";
                     users.reverse().forEach(u => {
                         body.innerHTML += `
-                            <tr class="border-b border-white/5 hover:bg-white/[0.02] transition">
-                                <td class="py-4 font-bold text-blue-400 italic">@${u.username}</td>
-                                <td class="py-4"><span class="px-2 py-0.5 rounded bg-white/5 text-[8px] font-black uppercase border border-white/10 text-gray-400">${u.rank || 'Standard'}</span></td>
-                                <td class="py-4 text-right"><span class="text-green-500 text-[9px] font-black uppercase tracking-widest">Synced</span></td>
+                            <tr class="border-b border-white/5">
+                                <td class="py-4 font-bold text-blue-400">@${u.username}</td>
+                                <td class="py-4"><span class="text-green-500 text-[10px] font-bold uppercase tracking-widest">Authorized</span></td>
+                                <td class="py-4 text-right"><i class="fas fa-trash text-gray-800"></i></td>
                             </tr>`;
                     });
                 }
             } catch (e) {
-                body.innerHTML = `<tr><td colspan="3" class="py-10 text-center text-red-500/40 italic">Sync Failure: Server Connection Interrupted</td></tr>`;
+                console.error("Critical Sync Error:", e);
+                statusBox.innerHTML = '<span class="status-pill bg-red-500/10 text-red-500 italic">Engine Offline</span>';
+                body.innerHTML = `<tr><td colspan="3" class="py-10 text-center text-red-500/50 italic">
+                    Connection Refused: CORS or Server 404. Check Console (F12).
+                </td></tr>`;
             }
         }
 
-        // 3. Official Mail (Corrected logic)
-        window.sendOfficialMail = async () => {
-            const target = document.getElementById('msgTarget').value;
-            const message = document.getElementById('msgBody').value;
-            if(!target || !message) return alert("All fields are required.");
-
-            try {
-                const res = await fetch(API_URL + "/auth/send-mail", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ sender: "Official", receiver: target, message })
-                });
-                const data = await res.json();
-                if(data.success) alert("Paradox Transmission Sent!");
-                else alert("Error: " + data.message);
-            } catch (e) { alert("Mail Engine Offline"); }
-        };
-
-        // 4. Tab Logic
         window.showSection = (id, el) => {
             document.querySelectorAll('main > section').forEach(s => s.classList.add('section-hidden'));
             document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
@@ -173,10 +119,9 @@
             el.classList.add('active');
         };
 
-        // Initial Executions
-        checkEngine();
+        // Run
         fetchUsers();
-        setInterval(fetchUsers, 20000); // 20s Auto-Sync
+        setInterval(fetchUsers, 20000);
     </script>
 </body>
 </html>
