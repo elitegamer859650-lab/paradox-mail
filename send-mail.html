@@ -16,9 +16,8 @@
         .input-box { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); transition: 0.3s; color: white; }
         .input-box:focus { border-color: #2563eb; outline: none; box-shadow: 0 0 20px rgba(37, 99, 235, 0.1); }
         
-        #overlay { background: rgba(2, 4, 10, 0.95); display: none; }
+        #overlay { background: rgba(2, 4, 10, 0.95); display: none; position: fixed; inset: 0; z-index: 50; }
         
-        /* Custom scrollbar for better look */
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
     </style>
@@ -79,18 +78,23 @@
             </div>
         </div>
 
-        <div id="overlay" class="fixed inset-0 z-50 flex flex-col items-center justify-center">
+        <div id="overlay" class="flex flex-col items-center justify-center">
             <div class="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-6"></div>
             <p id="statusLog" class="text-[10px] text-blue-500 uppercase font-bold tracking-widest">Authorizing Data...</p>
         </div>
     </main>
 
     <script type="module">
+        // 🚀 Backend Sync: Pauthservice Endpoint
         const API_URL = "https://elitegamer859650-pauthservice.hf.space";
 
+        // Session Verification
         const session = JSON.parse(localStorage.getItem('paradox_active_session'));
-        if(!session) window.location.href = "auth-gateway.html";
-        document.getElementById('myId').innerText = session.user + "@paradox.pk";
+        if(!session) {
+            window.location.href = "auth-gateway.html";
+        } else {
+            document.getElementById('myId').innerText = session.user + "@paradox.pk";
+        }
 
         document.getElementById('sendBtn').onclick = async () => {
             const targetId = document.getElementById('target').value.trim().toLowerCase();
@@ -102,13 +106,17 @@
             const log = document.getElementById('statusLog');
             const overlay = document.getElementById('overlay');
 
-            if(!targetId || !sub || !msg) return alert("Error: Missing core fields (To, Subject, or Message).");
+            // Form Validation
+            if(!targetId || !sub || !msg) {
+                return alert("Error: Missing core fields (To, Subject, or Message).");
+            }
 
             overlay.style.display = "flex";
             
             try {
                 log.innerText = "Encrypting Data...";
                 
+                // 📡 POST Transmission to Backend
                 const response = await fetch(`${API_URL}/auth/send-mail`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -117,8 +125,9 @@
                         receiver: targetId,
                         subject: sub,
                         message: msg,
-                        buttonText: bText, // Naya Data
-                        buttonLink: bLink  // Naya Data
+                        // 🔐 Keys renamed to match Supabase/Backend schema
+                        button_text: bText || null, 
+                        button_link: bLink || null  
                     })
                 });
 
