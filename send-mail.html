@@ -80,19 +80,22 @@
 
         <div id="overlay">
             <div class="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-6"></div>
-            <p id="statusLog" class="text-[10px] text-blue-500 uppercase font-bold tracking-widest">Authorizing Data...</p>
+            <p id="statusLog" class="text-[10px] text-blue-500 uppercase font-bold tracking-widest text-center px-4">Authorizing Data...</p>
         </div>
     </main>
 
     <script type="module">
         const API_URL = "https://elitegamer859650-pauthservice.hf.space";
 
-        const session = JSON.parse(localStorage.getItem('paradox_active_session'));
-        if(!session) {
+        const sessionStr = localStorage.getItem('paradox_active_session');
+        if(!sessionStr) {
             window.location.href = "auth-gateway.html";
-        } else {
-            document.getElementById('myId').innerText = session.user + "@paradox.pk";
         }
+        
+        const session = JSON.parse(sessionStr);
+        // User check from nested session data
+        const currentUser = session.data ? session.data.username : session.user;
+        document.getElementById('myId').innerText = currentUser + "@paradox.pk";
 
         document.getElementById('sendBtn').onclick = async () => {
             const targetId = document.getElementById('target').value.trim().toLowerCase();
@@ -104,23 +107,22 @@
             const log = document.getElementById('statusLog');
             const overlay = document.getElementById('overlay');
 
-            if(!targetId || !sub || !msg) return alert("Error: Missing core fields (To, Subject, or Message).");
+            if(!targetId || !sub || !msg) return alert("Error: Missing core fields.");
 
             overlay.style.display = "flex";
             
             try {
-                log.innerText = "Encrypting Data...";
+                log.innerText = "Encrypting Data Channels...";
                 
-                // 📡 POST Transmission to Backend
+                // 🚀 POST Transmission - Keys synced with backend variables
                 const response = await fetch(`${API_URL}/auth/send-mail`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        sender: session.user,
+                        sender: currentUser,
                         receiver: targetId,
                         subject: sub,
-                        message: msg,
-                        // 🛠️ DATA SYNC: Matching exact backend/Supabase column names
+                        message: msg, // Backend handles this as 'body'
                         button_text: bText || null, 
                         button_link: bLink || null  
                     })
@@ -129,16 +131,16 @@
                 const result = await response.json();
 
                 if(result.success) {
-                    log.innerText = "Transmission Dispatched!";
+                    log.innerText = "TRANSMISSION DISPATCHED!";
                     setTimeout(() => { window.location.href = "inbox.html"; }, 1000);
                 } else {
                     overlay.style.display = "none";
-                    alert("Paradox Engine: " + (result.error || "Insertion Blocked"));
+                    alert("Paradox Engine Refused: " + (result.error || "Schema Mismatch"));
                 }
 
             } catch(e) {
                 overlay.style.display = "none";
-                alert("Core Link Failure: Could not reach the server.");
+                alert("Core Link Failure: " + e.message);
             }
         };
     </script>
