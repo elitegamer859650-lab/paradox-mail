@@ -14,7 +14,6 @@
         body { background: #05070a; font-family: 'Plus Jakarta Sans', sans-serif; color: #ffffff; }
         .glass-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); border-radius: 28px; transition: 0.3s; }
         .glass-card:hover { background: rgba(59, 130, 246, 0.05); border-color: rgba(59, 130, 246, 0.3); transform: scale(1.01); cursor: pointer; }
-        .unread-indicator { width: 10px; height: 10px; background: #3b82f6; border-radius: 50%; box-shadow: 0 0 15px #3b82f6; }
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
         
@@ -70,12 +69,10 @@
     <script type="module">
         const API_URL = "https://elitegamer859650-pauthservice.hf.space";
         
-        // Session Guard
         const sessionStr = localStorage.getItem('paradox_active_session');
         if(!sessionStr) window.location.href = "auth-gateway.html";
         
         const userData = JSON.parse(sessionStr);
-        // Checking nested user object from Supabase response
         const userHandle = userData.data ? userData.data.username : userData.user;
 
         document.getElementById('userName').innerText = userHandle.toUpperCase();
@@ -87,7 +84,7 @@
             const syncTime = document.getElementById('syncTime');
 
             try {
-                // Fetching from synchronized backend route
+                // 📡 Fetching with userHandle
                 const res = await fetch(`${API_URL}/auth/get-mails?user=${userHandle.toLowerCase()}`);
                 const result = await res.json();
 
@@ -106,7 +103,10 @@
                     const card = document.createElement('div');
                     card.className = "glass-card p-6 flex items-center justify-between gap-5 group border border-white/5 hover:border-blue-500/30";
                     
-                    const isOfficial = mail.sender.toLowerCase() === 'official' || mail.sender.toLowerCase() === 'admin';
+                    // 🛠️ Mapping SQL: sender_id & body
+                    const senderDisplay = mail.sender_id || "Unknown";
+                    const messageBody = mail.body || "No content";
+                    const isOfficial = senderDisplay.toLowerCase() === 'official' || senderDisplay.toLowerCase() === 'admin';
                     
                     card.innerHTML = `
                         <div class="flex items-center gap-5 flex-1 min-w-0">
@@ -115,23 +115,22 @@
                             </div>
                             <div class="min-w-0">
                                 <h4 class="font-black text-sm italic uppercase tracking-tighter flex items-center gap-2">
-                                    ${mail.sender} 
+                                    ${senderDisplay} 
                                     ${isOfficial ? '<i class="fas fa-check-circle text-[10px] text-blue-500"></i>' : ''}
                                     <span class="text-[9px] text-blue-500/40 font-bold tracking-widest">@PARADOX.PK</span>
                                 </h4>
                                 <p class="text-xs font-bold text-gray-200 truncate mt-1">${mail.subject || 'Secure Transmission'}</p>
-                                <p class="text-[10px] text-gray-500 truncate mt-0.5 opacity-60 italic">${mail.message || 'No content'}</p>
+                                <p class="text-[10px] text-gray-500 truncate mt-0.5 opacity-60 italic">${messageBody.substring(0, 50)}...</p>
                             </div>
                         </div>
                         <div class="flex flex-col items-end gap-2">
-                            <span class="text-[8px] font-black text-gray-700 uppercase tracking-[0.2em] italic">Dispatched</span>
+                            <span class="text-[8px] font-black text-gray-700 uppercase tracking-[0.2em] italic">SYNCED</span>
                             <div class="w-8 h-8 rounded-full flex items-center justify-center bg-white/5 group-hover:bg-blue-600 group-hover:text-white transition-all">
                                 <i class="fas fa-chevron-right text-[10px]"></i>
                             </div>
                         </div>
                     `;
                     
-                    // Detail view passing ID
                     card.onclick = () => window.location.href = `view-mail.html?id=${mail.id}`;
                     container.appendChild(card);
                 });
@@ -148,9 +147,7 @@
             window.location.href = "auth-gateway.html";
         };
 
-        // Initial Boot
         loadMessages();
-        // Auto Sync every 30 seconds to save server resources
         setInterval(loadMessages, 30000); 
     </script>
 </body>
