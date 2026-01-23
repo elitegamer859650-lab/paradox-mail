@@ -24,6 +24,11 @@
             animation: shimmer 2s infinite;
         }
         @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        
+        .action-button {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+        }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-6 bg-[#020617]">
@@ -37,7 +42,7 @@
                 </button>
                 <div class="text-right text-[9px] text-gray-600 uppercase tracking-widest">
                     Message ID: <span id="displayId" class="text-blue-400 font-bold">...</span> <br>
-                    Security: Encrypted Connection
+                    Security: Paradox Encrypted Link
                 </div>
             </div>
             
@@ -49,40 +54,45 @@
                         <i class="fas fa-user text-xs"></i>
                     </div>
                     <div>
-                        <p class="text-[8px] uppercase text-gray-500 font-bold tracking-widest">From</p>
-                        <p id="mFrom" class="text-xs font-bold italic text-gray-400">Loading sender...</p>
+                        <p class="text-[8px] uppercase text-gray-500 font-bold tracking-widest">Sender ID</p>
+                        <p id="mFrom" class="text-xs font-bold italic text-gray-400">Loading...</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
                     <div class="w-8 h-8 rounded-lg bg-blue-600/10 flex items-center justify-center text-blue-500 border border-blue-500/20">
-                        <i class="fas fa-calendar-alt text-xs"></i>
+                        <i class="fas fa-clock text-xs"></i>
                     </div>
                     <div>
-                        <p class="text-[8px] uppercase text-gray-500 font-bold tracking-widest">Received On</p>
-                        <p id="mTime" class="text-xs font-bold italic text-gray-400">Syncing time...</p>
+                        <p class="text-[8px] uppercase text-gray-500 font-bold tracking-widest">Transmission Time</p>
+                        <p id="mTime" class="text-xs font-bold italic text-gray-400">Syncing...</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="relative min-h-[300px] bg-black/40 rounded-[2rem] border border-white/5 p-8 md:p-10">
+        <div class="relative min-h-[250px] bg-black/40 rounded-[2rem] border border-white/5 p-8 md:p-10 mb-8">
             <div id="shimmer" class="absolute inset-0 loading-shimmer rounded-[2rem] z-10"></div>
             <p id="mBody" class="text-gray-500 leading-relaxed text-sm md:text-lg italic relative z-10 whitespace-pre-wrap transition-all duration-700">
-                Connecting to Paradox Cloud...
-                Fetching secure data packets...
-                Verifying your identity...
-                Please wait while we load your message content.
+                Connecting to Paradox Core...
+                Decrypting data packets...
             </p>
         </div>
 
-        <div class="mt-12 flex flex-wrap gap-4 relative z-10">
-            <button id="replyBtn" class="px-10 py-4 bg-blue-600 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-blue-600/20 hover:scale-105 transition disabled:opacity-50">Reply to Message</button>
-            <button onclick="window.print()" class="px-8 py-4 bg-white/5 border border-white/10 rounded-2xl font-black uppercase tracking-widest text-[10px] text-gray-500 hover:text-white transition">Print Message</button>
+        <div id="actionModule" class="hidden mb-12 p-6 bg-blue-600/5 border border-blue-500/20 rounded-[2rem] flex flex-col items-center text-center">
+            <p class="text-[9px] text-blue-500 font-black uppercase tracking-widest mb-4">External Action Required</p>
+            <a id="mActionBtn" href="#" target="_blank" class="action-button px-12 py-4 rounded-2xl font-black uppercase tracking-widest text-[11px] text-white hover:scale-105 transition-all">
+                Execute Link
+            </a>
+        </div>
+
+        <div class="mt-8 flex flex-wrap gap-4 relative z-10">
+            <button id="replyBtn" class="px-10 py-4 bg-blue-600 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-blue-600/20 hover:scale-105 transition disabled:opacity-50">Reply</button>
+            <button onclick="window.print()" class="px-8 py-4 bg-white/5 border border-white/10 rounded-2xl font-black uppercase tracking-widest text-[10px] text-gray-500 hover:text-white transition">Print</button>
         </div>
 
         <div class="mt-10 pt-6 border-t border-white/5 flex justify-between items-center text-[8px] text-gray-700 uppercase tracking-widest">
-            <span>Verified by Paradox Studio</span>
-            <span class="text-blue-900">Official.Paradox.Pk</span>
+            <span>Verified Terminal</span>
+            <span class="text-blue-900 italic font-bold">Paradox.Secure.pk</span>
         </div>
     </div>
 
@@ -95,44 +105,58 @@
         if(!mailId || !session) {
             window.location.href = "inbox.html";
         } else {
-            document.getElementById('displayId').innerText = mailId.substring(0, 8).toUpperCase();
+            document.getElementById('displayId').innerText = mailId.toString().substring(0, 8).toUpperCase();
             loadMessage();
         }
 
         async function loadMessage() {
             try {
-                const res = await fetch(`${API_URL}/auth/get-mail-body?id=${mailId}`);
+                // Fetch using standard endpoint
+                const res = await fetch(`${API_URL}/auth/get-mails?user=${session.user || session.data.username}`);
                 const result = await res.json();
 
                 if(result.success) {
-                    const data = result.data;
+                    // Find exact mail by ID from list
+                    const data = result.data.find(m => m.id == mailId);
                     
+                    if(!data) throw new Error("Message Expired");
+
                     setTimeout(() => {
                         document.getElementById('shimmer').classList.add('hidden');
                         
+                        // Set Subject
                         const subjectEl = document.getElementById('mSubject');
-                        subjectEl.innerText = data.subject || "No Subject";
-                        subjectEl.classList.remove('text-blue-500');
-                        subjectEl.classList.add('text-white');
+                        subjectEl.innerText = data.subject || "Secure Data";
+                        subjectEl.classList.replace('text-blue-500', 'text-white');
                         
+                        // Set Meta
                         document.getElementById('mFrom').innerText = `${data.sender_id}@paradox.pk`;
                         document.getElementById('mTime').innerText = new Date(data.created_at).toLocaleString();
                         
+                        // Set Body (SQL column is 'body')
                         const bodyEl = document.getElementById('mBody');
-                        bodyEl.innerText = data.body;
+                        bodyEl.innerText = data.body || data.message;
                         bodyEl.classList.remove('text-gray-500', 'italic');
                         bodyEl.classList.add('text-gray-200');
 
+                        // 🚀 Handle Embedded Action Button
+                        if(data.button_text && data.button_link) {
+                            const actionModule = document.getElementById('actionModule');
+                            const actionBtn = document.getElementById('mActionBtn');
+                            
+                            actionModule.classList.remove('hidden');
+                            actionBtn.innerText = data.button_text;
+                            actionBtn.href = data.button_link.startsWith('http') ? data.button_link : `https://${data.button_link}`;
+                        }
+
+                        // Reply Logic
                         document.getElementById('replyBtn').onclick = () => {
-                            window.location.href = `send-mail.html?replyTo=${data.sender_id}`;
+                            window.location.href = `send-mail.html?to=${data.sender_id}&subject=Re: ${data.subject}`;
                         };
-                    }, 1500);
-                } else {
-                    document.getElementById('mBody').innerText = "Error: Message could not be found.";
-                    document.getElementById('shimmer').classList.add('hidden');
+                    }, 1200);
                 }
             } catch (e) {
-                document.getElementById('mBody').innerText = "Error: Could not connect to the server.";
+                document.getElementById('mBody').innerText = "FATAL ERROR: Decryption Failed or Message Missing.";
                 document.getElementById('shimmer').classList.add('hidden');
             }
         }
