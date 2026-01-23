@@ -33,7 +33,7 @@
         <div class="flex items-center gap-6">
             <div class="hidden sm:block text-right">
                 <p id="userName" class="text-xs font-black text-gray-200 tracking-tighter">...</p>
-                <p id="userAddress" class="text-[9px] text-blue-500 font-bold uppercase">user@paradox.pk</p>
+                <p id="userAddress" class="text-[9px] text-blue-500 font-bold uppercase italic">...</p>
             </div>
             <a href="send-mail.html" class="bg-blue-600 hover:bg-blue-500 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition flex items-center gap-2 shadow-xl shadow-blue-600/20">
                 <i class="fas fa-plus"></i> Compose
@@ -46,8 +46,9 @@
         <section class="flex-1 p-6 md:p-12 overflow-y-auto bg-gradient-to-b from-[#05070a] to-[#0a0c10]">
             <div class="flex justify-between items-center mb-12">
                 <h2 class="text-4xl font-black italic uppercase tracking-tighter">Incoming <span class="text-blue-600">Secure</span></h2>
-                <div class="text-[9px] text-gray-500 font-black uppercase tracking-[0.2em] bg-white/5 px-5 py-2 rounded-full border border-white/5">
-                    Cloud Sync: <span id="syncTime" class="text-blue-500 status-pulse italic">Connecting...</span>
+                <div class="text-[9px] text-gray-500 font-black uppercase tracking-[0.2em] bg-white/5 px-5 py-2 rounded-full border border-white/5 flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 bg-blue-500 rounded-full status-pulse"></span>
+                    Cloud Sync: <span id="syncTime" class="text-blue-500 italic">Connecting...</span>
                 </div>
             </div>
 
@@ -68,12 +69,17 @@
 
     <script type="module">
         const API_URL = "https://elitegamer859650-pauthservice.hf.space";
-        const session = localStorage.getItem('paradox_active_session');
-        if(!session) window.location.href = "auth-gateway.html";
-        const userData = JSON.parse(session);
+        
+        // Session Guard
+        const sessionStr = localStorage.getItem('paradox_active_session');
+        if(!sessionStr) window.location.href = "auth-gateway.html";
+        
+        const userData = JSON.parse(sessionStr);
+        // Checking nested user object from Supabase response
+        const userHandle = userData.data ? userData.data.username : userData.user;
 
-        document.getElementById('userName').innerText = userData.user.toUpperCase();
-        document.getElementById('userAddress').innerText = userData.user + "@paradox.pk";
+        document.getElementById('userName').innerText = userHandle.toUpperCase();
+        document.getElementById('userAddress').innerText = userHandle + "@paradox.pk";
 
         async function loadMessages() {
             const container = document.getElementById('mailList');
@@ -81,12 +87,11 @@
             const syncTime = document.getElementById('syncTime');
 
             try {
-                // Bilal Bhai: /auth/get-mails wala route use ho raha hai jo pichle step mein backend mein add kiya tha
-                const res = await fetch(`${API_URL}/auth/get-mails?user=${userData.user.toLowerCase()}`);
+                // Fetching from synchronized backend route
+                const res = await fetch(`${API_URL}/auth/get-mails?user=${userHandle.toLowerCase()}`);
                 const result = await res.json();
 
                 syncTime.innerText = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                syncTime.classList.remove('status-pulse');
 
                 if (!result.success || !result.data || result.data.length === 0) {
                     container.innerHTML = "";
@@ -99,14 +104,13 @@
                 
                 result.data.forEach(mail => {
                     const card = document.createElement('div');
-                    card.className = "glass-card p-6 flex items-center justify-between gap-5 group";
+                    card.className = "glass-card p-6 flex items-center justify-between gap-5 group border border-white/5 hover:border-blue-500/30";
                     
-                    // Logic to check if sender is official or user
                     const isOfficial = mail.sender.toLowerCase() === 'official' || mail.sender.toLowerCase() === 'admin';
                     
                     card.innerHTML = `
                         <div class="flex items-center gap-5 flex-1 min-w-0">
-                            <div class="w-14 h-14 rounded-2xl ${isOfficial ? 'bg-blue-600/10 text-blue-500 border-blue-500/30' : 'bg-white/5 text-gray-500 border-white/5'} flex items-center justify-center text-xl border">
+                            <div class="w-14 h-14 rounded-2xl ${isOfficial ? 'bg-blue-600/10 text-blue-500 border-blue-500/20' : 'bg-white/5 text-gray-500 border-white/5'} flex items-center justify-center text-xl border">
                                 <i class="fas ${isOfficial ? 'fa-shield-alt' : 'fa-user-secret'}"></i>
                             </div>
                             <div class="min-w-0">
@@ -116,18 +120,18 @@
                                     <span class="text-[9px] text-blue-500/40 font-bold tracking-widest">@PARADOX.PK</span>
                                 </h4>
                                 <p class="text-xs font-bold text-gray-200 truncate mt-1">${mail.subject || 'Secure Transmission'}</p>
-                                <p class="text-[10px] text-gray-500 truncate mt-0.5 opacity-60 italic">${mail.message.substring(0, 60)}...</p>
+                                <p class="text-[10px] text-gray-500 truncate mt-0.5 opacity-60 italic">${mail.message || 'No content'}</p>
                             </div>
                         </div>
                         <div class="flex flex-col items-end gap-2">
-                            <span class="text-[8px] font-black text-gray-700 uppercase tracking-[0.2em] italic">Encrypted</span>
+                            <span class="text-[8px] font-black text-gray-700 uppercase tracking-[0.2em] italic">Dispatched</span>
                             <div class="w-8 h-8 rounded-full flex items-center justify-center bg-white/5 group-hover:bg-blue-600 group-hover:text-white transition-all">
                                 <i class="fas fa-chevron-right text-[10px]"></i>
                             </div>
                         </div>
                     `;
                     
-                    // Email view link fix
+                    // Detail view passing ID
                     card.onclick = () => window.location.href = `view-mail.html?id=${mail.id}`;
                     container.appendChild(card);
                 });
@@ -135,7 +139,7 @@
             } catch (err) {
                 console.error("Sync Failure:", err);
                 syncTime.innerText = "OFFLINE";
-                syncTime.className = "text-red-500 status-pulse font-black";
+                syncTime.className = "text-red-500 font-black";
             }
         }
 
@@ -144,10 +148,10 @@
             window.location.href = "auth-gateway.html";
         };
 
-        // Initial Load
+        // Initial Boot
         loadMessages();
-        // Har 15 seconds baad background update
-        setInterval(loadMessages, 15000); 
+        // Auto Sync every 30 seconds to save server resources
+        setInterval(loadMessages, 30000); 
     </script>
 </body>
 </html>
